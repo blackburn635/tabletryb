@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.aws-sam/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SAM (legacy)
+samconfig.toml
+
+# CDK
+cdk.out/
+infrastructure/dist/
+
+# Coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*

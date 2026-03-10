@@ -1,0 +1,32 @@
+# Amplify Hosting build spec — TableTryb
+#
+# Multi-environment:
+#   main branch    → production  (tabletryb.com)
+#   develop branch → staging     (staging.tabletryb.com)
+#
+# Set these env vars per branch in the Amplify Console:
+#   REACT_APP_API_URL
+#   REACT_APP_USER_POOL_ID
+#   REACT_APP_USER_POOL_CLIENT_ID
+#   REACT_APP_CHARGEBEE_SITE
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+            - npm run build:shared
+        build:
+          commands:
+            - npm run build:frontend
+      artifacts:
+        baseDirectory: frontend/build
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+          - packages/shared/dist/**/*
+      buildPath: /
+    appRoot: .

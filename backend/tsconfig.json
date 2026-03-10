@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "functions",
+    "module": "CommonJS",
+    "moduleResolution": "node"
+  },
+  "include": ["functions/**/*"],
+  "references": [
+    { "path": "../packages/shared" }
+  ]
+}

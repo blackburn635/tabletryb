@@ -1,0 +1,26 @@
+{
+  "name": "@tabletryb/infrastructure",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "cdk": "cdk",
+    "synth": "cdk synth",
+    "diff": "cdk diff",
+    "deploy:staging": "cdk deploy TableTryb-staging --require-approval never",
+    "deploy:prod": "cdk deploy TableTryb-prod --require-approval broadening",
+    "deploy:all": "cdk deploy --all --require-approval broadening",
+    "destroy:staging": "cdk destroy TableTryb-staging",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.140.0",
+    "constructs": "^10.3.0",
+    "@tabletryb/shared": "*"
+  },
+  "devDependencies": {
+    "aws-cdk": "^2.140.0",
+    "typescript": "^5.4.0",
+    "@types/node": "^20.11.0"
+  }
+}
