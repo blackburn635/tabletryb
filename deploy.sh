@@ -29,7 +29,7 @@ echo "========================================="
 # Verify AWS credentials
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 echo "AWS Account: ${ACCOUNT_ID}"
-echo "Region: ${CDK_DEFAULT_REGION:-us-east-1}"
+echo "Region: ${CDK_DEFAULT_REGION:-us-east-2}"
 
 # Build shared types package
 echo ""

@@ -59,7 +59,8 @@ export class TrybFunction extends Construct {
   ) {
     super(scope, id);
 
-    const functionsDir = path.join(__dirname, '..', '..', 'backend', 'functions');
+    // Go up from lib/constructs/ → lib/ → infrastructure/ → repo root, then into backend/functions/
+    const functionsDir = path.join(__dirname, '..', '..', '..', 'backend', 'functions');
 
     this.function = new nodejs.NodejsFunction(this, 'Function', {
       functionName: `tabletryb-${id.toLowerCase()}-${props.stage}`,

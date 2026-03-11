@@ -38,7 +38,7 @@ The Family Meal Planner prototype proved out the core product on a single-family
 | Environments | Single (prod) | **Staging + Production** — isolated CloudFormation stacks |
 | Grocery stores | H-E-B search links only | **Tiered model** — cart push (Kroger), search links (H-E-B, Walmart, etc.), list export |
 | Roles | Parent / Child | **Primary / Member** with account holder flag |
-| Region | us-east-2 (Ohio) | **us-east-1** — Amplify feature completeness, service availability |
+| Region | us-east-2 (Ohio) | **us-east-2** — Amplify feature completeness, service availability |
 
 ## System Architecture Diagram
 

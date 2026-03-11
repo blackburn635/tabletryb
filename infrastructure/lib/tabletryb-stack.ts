@@ -488,7 +488,7 @@ export class TableTrybStack extends cdk.Stack {
       description: 'DynamoDB table name',
     });
 
-    new cdk.CfnOutput(this, 'RecipeImageBucket', {
+    new cdk.CfnOutput(this, 'RecipeImageBucketName', {
       value: imageBucket.bucketName,
       description: 'S3 bucket for recipe images',
     });
