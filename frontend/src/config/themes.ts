@@ -111,30 +111,30 @@ export const OCEAN_BLUE: ThemePalette = {
 };
 
 // ============================================================================
-// PALETTE: Midnight (dark mode)
-// Dark surfaces with vibrant accents
+// PALETTE: Kitchen Warm (Mauve lead, warm cream background)
+// Mauve primary with lime + mustard accents — warm/inviting aesthetic
 // ============================================================================
-export const MIDNIGHT: ThemePalette = {
-  id: 'midnight',
-  name: 'Midnight',
+export const KITCHEN_WARM: ThemePalette = {
+  id: 'kitchen-warm',
+  name: 'Kitchen Warm',
   colors: {
-    primary: '#818CF8',
-    primaryLight: '#A5B4FC',
-    primaryDark: '#6366F1',
-    secondary: '#FB923C',
-    secondaryLight: '#FDBA74',
-    accent: '#2DD4BF',
-    background: '#0F172A',
-    backgroundAlt: '#1E293B',
-    surface: '#1E293B',
-    text: '#F1F5F9',
-    textMuted: '#94A3B8',
-    textInverse: '#0F172A',
-    border: '#334155',
-    success: '#34D399',
-    warning: '#FBBF24',
-    error: '#F87171',
-    navGlass: 'rgba(15, 23, 42, 0.92)',
+    primary: '#ba626c',
+    primaryLight: '#d08e96',
+    primaryDark: '#9a4a53',
+    secondary: '#8eb66b',
+    secondaryLight: '#dfa159',
+    accent: '#102984',
+    background: '#fdfaf5',
+    backgroundAlt: '#f5efe5',
+    surface: '#ffffff',
+    text: '#1B1B1B',
+    textMuted: '#6B7280',
+    textInverse: '#ffffff',
+    border: '#E5E7EB',
+    success: '#8eb66b',
+    warning: '#dfa159',
+    error: '#ba626c',
+    navGlass: 'rgba(253, 250, 245, 0.92)',
   },
 };
 
@@ -144,11 +144,11 @@ export const MIDNIGHT: ThemePalette = {
 export const THEMES: Record<string, ThemePalette> = {
   'tabletryb-default': TABLETRYB_DEFAULT,
   'ocean-blue': OCEAN_BLUE,
-  'midnight': MIDNIGHT,
+  'kitchen-warm': KITCHEN_WARM,
 };
 
 /** The palette used by default when no preference is set */
-export const DEFAULT_THEME_ID = 'tabletryb-default';
+export const DEFAULT_THEME_ID = 'kitchen-warm';
 
 /**
  * Generate CSS custom properties from a theme palette.

@@ -30,7 +30,7 @@ export interface Household {
   createdAt: string;
   updatedAt: string;
   members: HouseholdMember[];
-  maxMembers: number; // Default 8
+  maxMembers: number; // Default 50
 }
 
 export interface HouseholdSettings {

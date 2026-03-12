@@ -67,8 +67,7 @@ const AppShell: React.FC = () => {
           {/* Left: Logo + Home */}
           <div className="topbar-left">
             <Link to="/app" className="topbar-logo" title="Home">
-              <Logo size={28} />
-              <span className="topbar-brand">{BRAND.name}</span>
+              <Logo size={56} />
             </Link>
             <Link to="/app" className="topbar-home-btn" title="Home">
               <Home size={18} />

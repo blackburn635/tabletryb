@@ -40,11 +40,11 @@ const HomePage: React.FC = () => {
           <p className="hero-note">14-day free trial. No credit card required.</p>
         </div>
         <div className="hero-visual">
-          {/* PLACEHOLDER: Replace with product screenshot or illustration */}
-          <div className="hero-placeholder-image">
-            <ChefHat size={120} color={BRAND.colors.primary} strokeWidth={1} />
-            <p>Product screenshot placeholder</p>
-          </div>
+          <img
+            src="/assets/hero-screenshot.jpeg"
+            alt="TableTryb meal planning dashboard"
+            className="hero-image"
+          />
         </div>
       </section>
 
@@ -59,8 +59,8 @@ const HomePage: React.FC = () => {
 
         <div className="steps-grid">
           <div className="step-card">
-            <div className="step-number">1</div>
-            <div className="step-icon-group">
+            <div className="step-number" style={{ background: 'var(--color-secondary-light)' }}>1</div>
+            <div className="step-icon-group" style={{ color: 'var(--color-secondary-light)' }}>
               <Camera size={28} />
               <LinkIcon size={28} />
               <Scan size={28} />
@@ -73,8 +73,8 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="step-card">
-            <div className="step-number">2</div>
-            <div className="step-icon-group">
+            <div className="step-number" style={{ background: 'var(--color-secondary)' }}>2</div>
+            <div className="step-icon-group" style={{ color: 'var(--color-secondary)' }}>
               <ThumbsUp size={28} />
             </div>
             <h3>Vote Together</h3>
@@ -85,8 +85,8 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="step-card">
-            <div className="step-number">3</div>
-            <div className="step-icon-group">
+            <div className="step-number" style={{ background: 'var(--color-accent)' }}>3</div>
+            <div className="step-icon-group" style={{ color: 'var(--color-accent)' }}>
               <ShoppingCart size={28} />
             </div>
             <h3>Shop Smarter</h3>
@@ -110,35 +110,41 @@ const HomePage: React.FC = () => {
               icon: Camera,
               title: 'AI Recipe Import',
               desc: 'Photograph a cookbook page, paste a blog URL, or type it in. AI extracts ingredients and instructions instantly.',
+              color: 'var(--color-secondary)',
             },
             {
               icon: ThumbsUp,
               title: 'Family Voting',
               desc: 'Every member votes thumbs up or down. See results in real-time and make dinner decisions together.',
+              color: 'var(--color-primary)',
             },
             {
               icon: ShoppingCart,
               title: 'Smart Grocery Lists',
               desc: 'Auto-generated from your finalized meals, organized by store aisle, with pantry staples separated.',
+              color: 'var(--color-secondary-light)',
             },
             {
               icon: Globe,
               title: 'Store Integrations',
               desc: 'Push your list to Kroger\'s cart directly, or search items at H-E-B, Walmart, Target, and more.',
+              color: 'var(--color-accent)',
             },
             {
               icon: Smartphone,
               title: 'Works on Any Device',
               desc: 'Plan on your laptop, vote on your phone, shop with your list at the store. Fully responsive.',
+              color: 'var(--color-secondary)',
             },
             {
               icon: Users,
               title: 'Built for Families',
-              desc: 'Up to 8 household members. Admin controls who can finalize meals. Everyone gets a voice.',
+              desc: 'Unlimited household members. Admin controls who can finalize meals. Everyone gets a voice.',
+              color: 'var(--color-primary)',
             },
           ].map((feature) => (
             <div key={feature.title} className="feature-card">
-              <feature.icon size={32} color={BRAND.colors.primary} />
+              <feature.icon size={32} style={{ color: feature.color }} />
               <h3>{feature.title}</h3>
               <p>{feature.desc}</p>
             </div>

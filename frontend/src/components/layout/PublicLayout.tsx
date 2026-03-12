@@ -18,8 +18,7 @@ const PublicLayout: React.FC = () => {
       <nav className="public-nav">
         <div className="nav-inner">
           <Link to="/" className="nav-logo">
-            <Logo size={32} />
-            <span className="nav-brand-name">{BRAND.name}</span>
+            <Logo size={75} />
           </Link>
 
           <div className="nav-links">
@@ -42,7 +41,6 @@ const PublicLayout: React.FC = () => {
         <div className="footer-inner">
           <div className="footer-brand">
             <Logo size={24} />
-            <span>{BRAND.name}</span>
           </div>
           <div className="footer-links">
             <a href="/privacy">Privacy</a>

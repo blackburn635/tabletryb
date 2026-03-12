@@ -1,31 +1,31 @@
 /**
- * Logo — Renders the TableTryb logo from asset files.
- * Uses logo-icon.svg for small sizes, logo-light.svg for full logo.
+ * Logo — Renders the actual brand logo image.
+ * `size` controls the HEIGHT; width scales naturally with aspect ratio.
  */
 
 import React from 'react';
-import { BRAND } from '../../config/branding';
 
 interface LogoProps {
-  /** Height in pixels */
   size?: number;
-  /** Show full logo (mark + wordmark) vs icon only */
-  showText?: boolean;
-  /** Use dark variant (for dark backgrounds) */
-  variant?: 'light' | 'dark';
+  variant?: 'light' | 'dark' | 'icon';
 }
 
-const Logo: React.FC<LogoProps> = ({ size = 32, showText = false, variant = 'light' }) => {
-  const logoSrc = showText
-    ? (variant === 'dark' ? BRAND.logo.dark : BRAND.logo.light)
-    : BRAND.logo.icon;
+const LOGO_SRC: Record<string, string> = {
+  light: '/assets/logo-light.svg',
+  dark: '/assets/logo-dark.svg',
+  icon: '/assets/logo-icon.svg',
+};
 
+const Logo: React.FC<LogoProps> = ({ size = 32, variant = 'light' }) => {
   return (
     <img
-      src={logoSrc}
-      alt={BRAND.name}
-      style={{ height: size, width: 'auto' }}
-      className="logo"
+      src={LOGO_SRC[variant]}
+      alt="TableTryb"
+      style={{
+        height: size,
+        width: 'auto',
+        display: 'block',
+      }}
     />
   );
 };

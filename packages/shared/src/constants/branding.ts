@@ -30,16 +30,16 @@ export const BRAND = {
   /** No-reply email for transactional messages (invites, notifications) */
   noReplyEmail: 'noreply@tabletryb.com', // PLACEHOLDER
 
-  /** Color palette — PLACEHOLDER values (warm kitchen aesthetic) */
+  /** Color palette — */
   colors: {
-    primary: '#dfa159',       // Mustard — main brand
-    primaryLight: '#efc088',  // Light mustard
-    primaryDark: '#c4863d',   // Dark mustard
-    secondary: '#8eb66b',     // Lime green — secondary brand
-    secondaryLight: '#b0cf96', // Light lime
+    primary: '#ba626c',       // Mauve
+    primaryLight: '#d08e96',  // Light mauve
+    primaryDark: '#9a4a53',   // Dark mauve
+    secondary: '#8eb66b',     // Lime green
+    secondaryLight: '#dfa159', // Mustard
     accent: '#102984',        // Deep blue
-    background: '#ffffff',    // White
-    backgroundAlt: '#f9f7f4', // Warm off-white
+    background: '#fdfaf5',    // Warm cream
+    backgroundAlt: '#f5efe5', // Darker cream
     surface: '#ffffff',       // Card backgrounds
     text: '#1B1B1B',          // Primary text
     textMuted: '#6B7280',     // Secondary text
@@ -47,7 +47,7 @@ export const BRAND = {
     border: '#E5E7EB',        // Subtle borders
     success: '#8eb66b',       // Lime green (brand)
     warning: '#dfa159',       // Mustard (brand)
-    error: '#ba626c',         // Mauve
+    error: '#ba626c',         // Mauve (brand)
   },
 
   /** Logo file paths — PLACEHOLDER: replace with actual logo files */

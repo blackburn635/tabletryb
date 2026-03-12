@@ -37,7 +37,7 @@ export const handler = async (
       createdBy: user.userId,
       createdAt: now,
       updatedAt: now,
-      maxMembers: 8,
+      maxMembers: 50,
     });
 
     // Create the creator's membership — account holder + primary user
