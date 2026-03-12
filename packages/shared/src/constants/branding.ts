@@ -32,22 +32,22 @@ export const BRAND = {
 
   /** Color palette — PLACEHOLDER values (warm kitchen aesthetic) */
   colors: {
-    primary: '#2D6A4F', // Forest green
-    primaryLight: '#52B788', // Light green
-    primaryDark: '#1B4332', // Dark green
-    secondary: '#E76F51', // Warm coral
-    secondaryLight: '#F4A261', // Amber
-    accent: '#264653', // Deep teal
-    background: '#FEFAE0', // Warm cream
-    backgroundAlt: '#F5F0E1', // Slightly darker cream
-    surface: '#FFFFFF', // Card backgrounds
-    text: '#1B1B1B', // Primary text
-    textMuted: '#6B7280', // Secondary text
-    textInverse: '#FFFFFF', // Text on dark backgrounds
-    border: '#E5E7EB', // Subtle borders
-    success: '#059669', // Green
-    warning: '#D97706', // Amber
-    error: '#DC2626', // Red
+    primary: '#dfa159',       // Mustard — main brand
+    primaryLight: '#efc088',  // Light mustard
+    primaryDark: '#c4863d',   // Dark mustard
+    secondary: '#8eb66b',     // Lime green — secondary brand
+    secondaryLight: '#b0cf96', // Light lime
+    accent: '#102984',        // Deep blue
+    background: '#ffffff',    // White
+    backgroundAlt: '#f9f7f4', // Warm off-white
+    surface: '#ffffff',       // Card backgrounds
+    text: '#1B1B1B',          // Primary text
+    textMuted: '#6B7280',     // Secondary text
+    textInverse: '#ffffff',   // Text on colored backgrounds
+    border: '#E5E7EB',        // Subtle borders
+    success: '#8eb66b',       // Lime green (brand)
+    warning: '#dfa159',       // Mustard (brand)
+    error: '#ba626c',         // Mauve
   },
 
   /** Logo file paths — PLACEHOLDER: replace with actual logo files */

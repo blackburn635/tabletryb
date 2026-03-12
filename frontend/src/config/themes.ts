@@ -55,35 +55,35 @@ const DEFAULT_FONTS: ThemeFonts = {
 };
 
 // ============================================================================
-// PALETTE: Kitchen Warm (current default)
-// Warm cream backgrounds with forest green accents — kitchen/food aesthetic
+// PALETTE: TableTryb Default (brand palette)
+// Clean white background with mustard + lime green brand colors
 // ============================================================================
-export const KITCHEN_WARM: ThemePalette = {
-  id: 'kitchen-warm',
-  name: 'Kitchen Warm',
+export const TABLETRYB_DEFAULT: ThemePalette = {
+  id: 'tabletryb-default',
+  name: 'TableTryb',
   colors: {
-    primary: '#2D6A4F',
-    primaryLight: '#52B788',
-    primaryDark: '#1B4332',
-    secondary: '#E76F51',
-    secondaryLight: '#F4A261',
-    accent: '#264653',
-    background: '#FEFAE0',
-    backgroundAlt: '#F5F0E1',
-    surface: '#FFFFFF',
+    primary: '#dfa159',
+    primaryLight: '#efc088',
+    primaryDark: '#c4863d',
+    secondary: '#8eb66b',
+    secondaryLight: '#b0cf96',
+    accent: '#102984',
+    background: '#ffffff',
+    backgroundAlt: '#f9f7f4',
+    surface: '#ffffff',
     text: '#1B1B1B',
     textMuted: '#6B7280',
-    textInverse: '#FFFFFF',
+    textInverse: '#ffffff',
     border: '#E5E7EB',
-    success: '#059669',
-    warning: '#D97706',
-    error: '#DC2626',
-    navGlass: 'rgba(254, 250, 224, 0.92)',
+    success: '#8eb66b',
+    warning: '#dfa159',
+    error: '#ba626c',
+    navGlass: 'rgba(255, 255, 255, 0.92)',
   },
 };
 
 // ============================================================================
-// PALETTE: Ocean Blue (example alternate)
+// PALETTE: Ocean Blue (alternate)
 // Cool blues with sandy neutrals — coastal/fresh aesthetic
 // ============================================================================
 export const OCEAN_BLUE: ThemePalette = {
@@ -111,7 +111,7 @@ export const OCEAN_BLUE: ThemePalette = {
 };
 
 // ============================================================================
-// PALETTE: Midnight (example dark mode)
+// PALETTE: Midnight (dark mode)
 // Dark surfaces with vibrant accents
 // ============================================================================
 export const MIDNIGHT: ThemePalette = {
@@ -142,17 +142,17 @@ export const MIDNIGHT: ThemePalette = {
 // Theme registry — add new palettes here
 // ============================================================================
 export const THEMES: Record<string, ThemePalette> = {
-  'kitchen-warm': KITCHEN_WARM,
+  'tabletryb-default': TABLETRYB_DEFAULT,
   'ocean-blue': OCEAN_BLUE,
   'midnight': MIDNIGHT,
 };
 
 /** The palette used by default when no preference is set */
-export const DEFAULT_THEME_ID = 'kitchen-warm';
+export const DEFAULT_THEME_ID = 'tabletryb-default';
 
 /**
  * Generate CSS custom properties from a theme palette.
- * Returns a flat object like { '--color-primary': '#2D6A4F', ... }
+ * Returns a flat object like { '--color-primary': '#dfa159', ... }
  */
 export function themeToCSSProperties(
   theme: ThemePalette

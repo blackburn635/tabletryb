@@ -8,23 +8,23 @@
    CSS Custom Properties (from branding.ts)
    ================================================================ */
 :root {
-  --color-primary: #2D6A4F;
-  --color-primary-light: #52B788;
-  --color-primary-dark: #1B4332;
-  --color-secondary: #E76F51;
-  --color-secondary-light: #F4A261;
-  --color-accent: #264653;
-  --color-bg: #FEFAE0;
-  --color-bg-alt: #F5F0E1;
-  --color-surface: #FFFFFF;
+  --color-primary: #dfa159;
+  --color-primary-light: #efc088;
+  --color-primary-dark: #c4863d;
+  --color-secondary: #8eb66b;
+  --color-secondary-light: #b0cf96;
+  --color-accent: #102984;
+  --color-bg: #ffffff;
+  --color-bg-alt: #f9f7f4;
+  --color-surface: #ffffff;
   --color-text: #1B1B1B;
   --color-text-muted: #6B7280;
-  --color-text-inverse: #FFFFFF;
+  --color-text-inverse: #ffffff;
   --color-border: #E5E7EB;
-  --color-success: #059669;
-  --color-warning: #D97706;
-  --color-error: #DC2626;
-  --color-nav-glass: rgba(254, 250, 224, 0.92);
+  --color-success: #8eb66b;
+  --color-warning: #dfa159;
+  --color-error: #ba626c;
+  --color-nav-glass: rgba(255, 255, 255, 0.92);
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-serif: 'Crimson Pro', Georgia, serif;
