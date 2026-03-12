@@ -34,7 +34,7 @@ Both are automated via GitHub Actions, triggered by branch pushes.
 ### 1. Bootstrap CDK (once per account/region)
 
 ```bash
-cdk bootstrap aws://{ACCOUNT_ID}/us-east-2
+cdk bootstrap aws://891920435168/us-east-2
 ```
 
 ### 2. Set Environment Variables
@@ -67,9 +67,9 @@ In the AWS Amplify Console:
 
 **develop branch:**
 ```
-REACT_APP_API_URL = https://{staging-api-id}.execute-api.us-east-2.amazonaws.com
-REACT_APP_USER_POOL_ID = {staging pool id}
-REACT_APP_USER_POOL_CLIENT_ID = {staging client id}
+REACT_APP_API_URL = https://4f5t6dgga2.execute-api.us-east-2.amazonaws.com
+REACT_APP_USER_POOL_ID = us-east-2_BCN0r9Ilj
+REACT_APP_USER_POOL_CLIENT_ID = 1vu6t16aurrqun3n965ch0ojhd
 REACT_APP_CHARGEBEE_SITE = tabletryb-test
 ```
 

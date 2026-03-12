@@ -106,3 +106,42 @@ I'll update `index.html` and `themes.ts`.
 4. Push to `main` — Amplify rebuilds automatically
 
 No code changes required for any of these steps.
+
+---
+
+## 6. Current Brand Palette (Finalized March 12, 2026)
+
+```
+PRIMARY:          #dfa159   (Mustard — main brand color)
+PRIMARY_LIGHT:    #efc088   (Light mustard)
+PRIMARY_DARK:     #c4863d   (Dark mustard — button hover)
+SECONDARY:        #8eb66b   (Lime green — secondary brand)
+SECONDARY_LIGHT:  #b0cf96   (Light lime)
+ACCENT:           #102984   (Deep blue — headings, special UI)
+BACKGROUND:       #ffffff   (White)
+BACKGROUND_ALT:   #f9f7f4   (Warm off-white)
+SURFACE:          #ffffff   (Card backgrounds)
+TEXT:             #1B1B1B   (Primary text)
+TEXT_MUTED:       #6B7280   (Secondary text)
+TEXT_INVERSE:     #ffffff   (Text on colored backgrounds)
+BORDER:           #E5E7EB   (Subtle borders)
+NAV_GLASS:        rgba(255, 255, 255, 0.92)
+SUCCESS:          #8eb66b   (Lime green — brand)
+WARNING:          #dfa159   (Mustard — brand)
+ERROR:            #ba626c   (Mauve)
+```
+
+**Additional brand colors (available for future UI elements):**
+- Accent Pink: `#f795ad` — notification badges, vote highlights, playful elements
+
+**Files updated:**
+- `packages/shared/src/constants/branding.ts` — source of truth
+- `frontend/src/config/themes.ts` — `TABLETRYB_DEFAULT` palette (was `KITCHEN_WARM`)
+- `frontend/src/styles/global.css` — `:root` CSS custom properties
+- `frontend/public/index.html` — `theme-color` meta tag
+
+**Logo assets in place:**
+- `frontend/public/assets/logo-light.svg`
+- `frontend/public/assets/logo-dark.svg`
+- `frontend/public/assets/logo-icon.svg`
+- `frontend/src/components/common/Logo.tsx` — updated to render `<img>` from asset files

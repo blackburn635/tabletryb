@@ -1,8 +1,8 @@
 # TableTryb — Architecture Overview
 
-**Version:** 1.1 · **Updated:** March 10, 2026
+**Version:** 1.2 · **Updated:** March 12, 2026
 **Origin:** Family Meal Planner personal prototype (AWS account 422207057006)
-**Target:** Dedicated AWS account (Cloudscribble business, account 528757783633)
+**Target:** Dedicated AWS account 891920435168 (member account under Cloudscribble AWS Organizations)
 **Company:** Cloudscribble LLC
 
 ---

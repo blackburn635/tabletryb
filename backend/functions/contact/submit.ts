@@ -88,6 +88,7 @@ export const handler = async (
         Destination: {
           ToAddresses: [BRAND.supportEmail],
         },
+        ReplyToAddresses: [body.email],
         Message: {
           Subject: {
             Data: `[${BRAND.name}] ${subjectLabel}: ${body.name}`,
@@ -125,7 +126,6 @@ export const handler = async (
               `,
             },
           },
-          ReplyToAddresses: [body.email],
         },
       })
     );
@@ -137,6 +137,7 @@ export const handler = async (
         Destination: {
           ToAddresses: [body.email],
         },
+        ReplyToAddresses: [BRAND.supportEmail],
         Message: {
           Subject: {
             Data: `We received your message — ${BRAND.name}`,
@@ -162,7 +163,6 @@ export const handler = async (
               `,
             },
           },
-          ReplyToAddresses: [BRAND.supportEmail],
         },
       })
     );

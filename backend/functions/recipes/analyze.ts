@@ -76,6 +76,11 @@ Rules:
 - For diets, only include if clearly applicable: "vegetarian", "vegan", "gluten-free", "dairy-free", "keto", "paleo".
 - Return ONLY the JSON object. No other text.`;
 
+/** Shape of a Claude API response */
+interface ClaudeResponse {
+  content?: Array<{ type: string; text?: string }>;
+}
+
 export const handler = async (
   event: APIGatewayProxyEventV2WithJWTAuthorizer
 ): Promise<APIGatewayProxyResultV2> => {
@@ -210,8 +215,8 @@ async function parseClaudeResponse(response: Response): Promise<AnalyzeRecipeRes
     throw new BadRequestError(`Claude API error: ${response.status}`);
   }
 
-  const data = await response.json();
-  const textContent = data.content?.find((c: { type: string }) => c.type === 'text');
+  const data = await response.json() as ClaudeResponse;
+  const textContent = data.content?.find((c) => c.type === 'text');
 
   if (!textContent?.text) {
     throw new BadRequestError('No response from Claude');

@@ -1,6 +1,6 @@
 # TableTryb — API Endpoints
 
-**Base URL:** `https://{api-id}.execute-api.us-east-1.amazonaws.com`
+**Base URL:** `https://{api-id}.execute-api.us-east-2.amazonaws.com`
 **Auth:** JWT Bearer token from Cognito (unless noted as public)
 **Format:** JSON request/response
 

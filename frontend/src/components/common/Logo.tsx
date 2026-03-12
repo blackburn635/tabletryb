@@ -1,46 +1,32 @@
 /**
- * Logo — PLACEHOLDER component.
- * Replace with actual logo SVG/image when branding is finalized.
- * For now, renders a simple icon placeholder.
+ * Logo — Renders the TableTryb logo from asset files.
+ * Uses logo-icon.svg for small sizes, logo-light.svg for full logo.
  */
 
 import React from 'react';
-import { UtensilsCrossed } from 'lucide-react';
 import { BRAND } from '../../config/branding';
 
 interface LogoProps {
+  /** Height in pixels */
   size?: number;
+  /** Show full logo (mark + wordmark) vs icon only */
   showText?: boolean;
+  /** Use dark variant (for dark backgrounds) */
+  variant?: 'light' | 'dark';
 }
 
-const Logo: React.FC<LogoProps> = ({ size = 32, showText = false }) => {
+const Logo: React.FC<LogoProps> = ({ size = 32, showText = false, variant = 'light' }) => {
+  const logoSrc = showText
+    ? (variant === 'dark' ? BRAND.logo.dark : BRAND.logo.light)
+    : BRAND.logo.icon;
+
   return (
-    <span className="logo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-      {/* PLACEHOLDER: Replace with actual logo image */}
-      <span
-        style={{
-          width: size,
-          height: size,
-          borderRadius: size * 0.25,
-          background: BRAND.colors.primary,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <UtensilsCrossed size={size * 0.6} color={BRAND.colors.textInverse} />
-      </span>
-      {showText && (
-        <span style={{
-          fontWeight: 700,
-          fontSize: size * 0.6,
-          color: BRAND.colors.text,
-          fontFamily: 'Inter, sans-serif',
-        }}>
-          {BRAND.name}
-        </span>
-      )}
-    </span>
+    <img
+      src={logoSrc}
+      alt={BRAND.name}
+      style={{ height: size, width: 'auto' }}
+      className="logo"
+    />
   );
 };
 

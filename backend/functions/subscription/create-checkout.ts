@@ -7,6 +7,12 @@ import type { CreateCheckoutRequest } from '@tabletryb/shared';
 const CHARGEBEE_SITE = process.env.CHARGEBEE_SITE!;
 const CHARGEBEE_API_KEY = process.env.CHARGEBEE_API_KEY!;
 
+interface ChargebeeCheckoutResponse {
+  hosted_page?: {
+    url?: string;
+  };
+}
+
 export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer): Promise<APIGatewayProxyResultV2> => {
   try {
     const user = getAuthUser(event);
@@ -32,7 +38,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer): P
       }
     );
 
-    const cbData = await cbResponse.json();
+    const cbData = await cbResponse.json() as ChargebeeCheckoutResponse;
     return success({ checkoutUrl: cbData.hosted_page?.url });
   } catch (err) { return error(err); }
 };
