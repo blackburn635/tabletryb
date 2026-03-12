@@ -10,6 +10,7 @@ import { BRAND } from '../../config/branding';
 import {
   Camera, Globe, ThumbsUp, ShoppingCart, Users, Smartphone,
   ChefHat, ArrowRight, Check, Scan, Link as LinkIcon,
+  LockKeyhole
 } from 'lucide-react';
 
 const HomePage: React.FC = () => {
@@ -121,7 +122,7 @@ const HomePage: React.FC = () => {
             {
               icon: ShoppingCart,
               title: 'Smart Grocery Lists',
-              desc: 'Auto-generated from your finalized meals, organized by store aisle, with pantry staples separated.',
+              desc: 'Auto-generated from your finalized meals, organized by store aisle, with pantry staples separated. Admins control who can finalize meals and manage the list.',
               color: 'var(--color-secondary-light)',
             },
             {
@@ -137,9 +138,9 @@ const HomePage: React.FC = () => {
               color: 'var(--color-secondary)',
             },
             {
-              icon: Users,
-              title: 'Built for Families',
-              desc: 'Unlimited household members. Admin controls who can finalize meals. Everyone gets a voice.',
+              icon: LockKeyhole,
+              title: 'Your Data Stays Yours',
+              desc: 'We don\'t sell your recipes, grocery lists, or eating habits to anyone. Ever. Our subscription model means we work for you — not advertisers.',
               color: 'var(--color-primary)',
             },
           ].map((feature) => (
@@ -159,14 +160,14 @@ const HomePage: React.FC = () => {
         <h2 className="section-title">One simple plan. No surprises.</h2>
         <div className="pricing-card-hero">
           <div className="pricing-price">
-            <span className="price-amount">$5.99</span>
+            <span className="price-amount">$4.99</span>
             <span className="price-period">/month</span>
           </div>
           <p className="pricing-or">or $49.99/year (save 30%)</p>
           <ul className="pricing-features">
             {[
               'Unlimited recipes',
-              'Up to 8 family members',
+              'Unlimited family members',
               'AI-powered recipe import',
               'Smart grocery lists',
               'Store integrations',

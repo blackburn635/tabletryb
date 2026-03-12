@@ -35,12 +35,12 @@ const SupportPage: React.FC = () => (
         <span className="support-link">Coming soon</span>
       </div>
 
-      <div className="support-card">
+      <a href="/faq" className="support-card" target="_blank" rel="noopener noreferrer">
         <HelpCircle size={28} />
         <h3>FAQ</h3>
         <p>Answers to the most common questions about TableTryb.</p>
-        <span className="support-link">Coming soon</span>
-      </div>
+        <span className="support-link">View FAQ <ExternalLink size={14} /></span>
+      </a>
     </div>
   </div>
 );
