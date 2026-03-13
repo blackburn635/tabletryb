@@ -35,3 +35,25 @@
 - [ ] GitHub Actions OIDC role for CI/CD deployments
 - [ ] Port Lambda business logic from prototype
 - [ ] Production stack deployment
+
+## March 12, 2026 — FAQ Page & Pricing Update
+
+### New Features
+- **FAQ page**: Added public FAQ page (`/faq`) with accordion-style layout across 6 categories — General, Pricing & Billing, Recipe Import & AI, Family Voting & Meal Planning, Grocery Lists & Store Integrations, and Account & Privacy
+- Added FAQ link to public nav bar (between Pricing and Contact) and footer
+- Updated in-app Support page: FAQ card now links to the public FAQ page instead of showing "Coming soon"
+
+### Pricing Change
+- Monthly price changed from $5.99/mo to $4.99/mo
+- Annual price unchanged at $49.99/yr (savings updated from 30% to ~17%)
+
+### Files Added
+- `frontend/src/pages/public/FaqPage.tsx` — FAQ page component with accordion
+- FAQ section styles appended to `frontend/src/styles/global.css`
+
+### Files Modified
+- `frontend/src/App.tsx` — added FaqPage import and `/faq` route
+- `frontend/src/components/layout/PublicLayout.tsx` — added FAQ to nav and footer links
+- `frontend/src/pages/app/SupportPage.tsx` — FAQ card links to `/faq`
+- `packages/shared/src/types/subscription.ts` — monthly price 599 → 499
+- `docs/SUBSCRIPTION.md` — updated price references

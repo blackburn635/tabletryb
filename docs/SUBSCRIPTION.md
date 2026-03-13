@@ -14,8 +14,8 @@
 | | Free Trial | TableTryb Plan |
 |--|-----------|----------------|
 | Duration | 14 days | Monthly or Annual |
-| Monthly price | $0 | $5.99/mo |
-| Annual price | $0 | $49.99/yr (save 30%) |
+| Monthly price | $0 | $4.99/mo |
+| Annual price | $0 | $49.99/yr (save ~17%) |
 | Household members | Up to 8 | Up to 8 |
 | Recipes | Unlimited | Unlimited |
 | Claude AI scans | 10 during trial | Unlimited |
@@ -140,7 +140,7 @@ Webhook authentication: Chargebee sends Basic Auth with the webhook password. Ou
 ## Chargebee Setup Checklist
 
 1. Create Chargebee account (test site + live site)
-2. Create plan: `tabletryb-monthly` ($5.99/mo, 14-day trial)
+2. Create plan: `tabletryb-monthly` ($4.99/mo, 14-day trial)
 3. Create plan: `tabletryb-annual` ($49.99/yr, 14-day trial)
 4. Add custom field on subscription: `cf_household_id` (String)
 5. Configure webhook endpoint: `https://{api-url}/v1/webhooks/chargebee`
