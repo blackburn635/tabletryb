@@ -1,5 +1,5 @@
 /**
- * PublicLayout — Layout for marketing pages (homepage, pricing, login).
+ * PublicLayout — Layout for marketing pages (homepage, pricing, faq, login).
  * Includes nav bar with logo and CTA, plus footer.
  */
 
@@ -24,6 +24,7 @@ const PublicLayout: React.FC = () => {
           <div className="nav-links">
             <Link to="/" className={`nav-link ${isHome ? 'active' : ''}`}>Home</Link>
             <Link to="/pricing" className="nav-link">Pricing</Link>
+            <Link to="/faq" className="nav-link">FAQ</Link>
             <Link to="/contact" className="nav-link">Contact</Link>
             <Link to="/login" className="nav-link">Log In</Link>
             <Link to="/signup" className="nav-cta">Start Free Trial</Link>
@@ -45,6 +46,7 @@ const PublicLayout: React.FC = () => {
           <div className="footer-links">
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
+            <Link to="/faq">FAQ</Link>
             <Link to="/contact">Contact</Link>
           </div>
           <div className="footer-copyright">

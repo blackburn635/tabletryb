@@ -14,9 +14,9 @@ const PricingPage: React.FC = () => (
         <span className="price-amount">${(PLANS.TABLETRYB_MONTHLY.price / 100).toFixed(2)}</span>
         <span className="price-period">/month</span>
       </div>
-      <p className="pricing-or">or ${(PLANS.TABLETRYB_ANNUAL.price / 100).toFixed(2)}/year (save 30%)</p>
+      <p className="pricing-or">or ${(PLANS.TABLETRYB_ANNUAL.price / 100).toFixed(2)}/year (save 17%)</p>
       <ul className="pricing-features">
-        {['Unlimited recipes', 'Up to 8 family members', 'AI recipe import (photo + URL)', 'Smart grocery lists by aisle', 'Grocery store integrations', 'Family voting & finalization', '14-day free trial'].map(f => (
+        {['Unlimited recipes', 'Unlimited members', 'AI recipe import (photo + URL)', 'Smart grocery lists by aisle', 'Grocery store integrations', 'Family voting & finalization', '14-day free trial'].map(f => (
           <li key={f}><Check size={18} color="var(--color-success)" />{f}</li>
         ))}
       </ul>

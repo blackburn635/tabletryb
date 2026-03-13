@@ -68,7 +68,7 @@ export const PLANS = {
   TABLETRYB_MONTHLY: {
     id: 'tabletryb-monthly',
     name: 'TableTryb Monthly',
-    price: 599, // cents
+    price: 499, // cents
     currency: 'USD',
     interval: 'month' as const,
     trialDays: 14,

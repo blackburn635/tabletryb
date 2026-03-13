@@ -1,7 +1,7 @@
 /**
  * App — Root component with routing.
  *
- * Public routes: homepage, pricing, contact, login (no auth required).
+ * Public routes: homepage, pricing, faq, contact, login (no auth required).
  * App routes: require auth + household membership.
  *   - /app = Dashboard with 3-tab workflow (home)
  *   - /app/profile, /app/users, /app/recipes, /app/settings, /app/support = dropdown pages
@@ -15,6 +15,7 @@ import { useAuth } from './context/AuthContext';
 import HomePage from './pages/public/HomePage';
 import LoginPage from './pages/public/LoginPage';
 import PricingPage from './pages/public/PricingPage';
+import FaqPage from './pages/public/FaqPage';
 import ContactPage from './pages/public/ContactPage';
 
 // Onboarding
@@ -57,6 +58,7 @@ const App: React.FC = () => {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/faq" element={<FaqPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={
           isAuthenticated ? <Navigate to="/app" replace /> : <LoginPage />

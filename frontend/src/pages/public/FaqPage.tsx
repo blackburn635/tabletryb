@@ -38,7 +38,7 @@ const FAQ_DATA: FaqCategory[] = [
       },
       {
         q: 'Who is TableTryb for?',
-        a: 'Any household that wants to plan meals together — families, roommates, couples, or anyone tired of the nightly "what\'s for dinner?" debate. Households can have up to 8 members.',
+        a: 'Any household that wants to plan meals together — families, roommates, couples, or anyone tired of the nightly "what\'s for dinner?" debate.',
       },
       {
         q: 'What devices does it work on?',
@@ -57,7 +57,7 @@ const FAQ_DATA: FaqCategory[] = [
     items: [
       {
         q: 'How much does TableTryb cost?',
-        a: '$5.99/month or $49.99/year (save 30%). One plan includes everything — unlimited recipes, up to 8 household members, AI recipe import, smart grocery lists, and store integrations.',
+        a: '$4.99/month or $49.99/year (save 17%). One plan includes everything — unlimited recipes, unlimited household members, AI recipe import, smart grocery lists, and store integrations.',
       },
       {
         q: 'Is there a free trial?',
@@ -84,15 +84,15 @@ const FAQ_DATA: FaqCategory[] = [
     items: [
       {
         q: 'How do I add recipes?',
-        a: 'Three ways: snap a photo of a recipe card or cookbook page, paste a URL from any food blog, or type it in manually. Our AI extracts the ingredients and instructions automatically from photos and URLs.',
+        a: 'Three ways: snap a photo of a recipe card or cookbook page, paste a website address (URL), or type it in manually. Our AI extracts the ingredients and instructions automatically from photos and URLs.',
       },
       {
         q: 'What does the AI actually do?',
-        a: 'When you import a recipe by photo or URL, AI reads the content and extracts the structured data — title, ingredients with quantities, and step-by-step instructions. You can review and edit everything before saving.',
+        a: 'When you import a recipe by photo or URL, AI reads the content and extracts the structured data — title, ingredients with quantities, and step-by-step instructions. You can review and edit everything at anytime.',
       },
       {
         q: 'How accurate is the AI import?',
-        a: 'It handles most recipes very well, especially clearly formatted ones. We always show you the extracted result so you can correct anything before saving. Handwritten recipe cards and unusual layouts may need a bit more editing.',
+        a: 'It handles most recipes very well, especially clearly formatted ones. We always show you the extracted result so you can correct anything before saving. Handwritten recipe cards and unusual layouts may need a little editing depending upon the quality of the handwriting.',
       },
       {
         q: 'Is there a limit on recipes?',
@@ -119,7 +119,7 @@ const FAQ_DATA: FaqCategory[] = [
       },
       {
         q: 'Who finalizes the meal plan?',
-        a: 'The primary account holder (the person who created the household) reviews the vote results and selects which meals make the final plan for the week. This keeps one person in charge of the final decision while giving everyone input.',
+        a: 'Primary account holders (the person who created the household and other designated members) reviews the vote results and selects which meals make the final plan for the week. This keeps one person in charge of the final decision while giving everyone input.',
       },
       {
         q: 'Can I change my vote?',
@@ -127,7 +127,7 @@ const FAQ_DATA: FaqCategory[] = [
       },
       {
         q: 'How many meals are in a weekly plan?',
-        a: 'The meal plan generates options from your recipe library for the week. The primary user selects which ones to finalize — you choose how many dinners to plan.',
+        a: 'The meal plan generates options from your recipe library for the week (default), or period established in settings. A primary user selects which ones to finalize — you choose how many dinners to plan.',
       },
     ],
   },
@@ -165,11 +165,11 @@ const FAQ_DATA: FaqCategory[] = [
     items: [
       {
         q: 'How do I invite family members?',
-        a: 'The primary account holder can invite members by email from the Users page inside the app. Invitees receive a link to join the household — up to 8 members total.',
+        a: 'The primary account holder can invite members by email from the Users page inside the app. Invitees receive a link to join the household.',
       },
       {
         q: 'What\'s the difference between "primary" and "member" roles?',
-        a: 'All users can browse recipes, vote on meals, and view the grocery list. The primary user has additional permissions: finalizing the meal plan, managing the grocery list, inviting or removing members, and adjusting household settings.',
+        a: 'All users can browse recipes, vote on meals, and view the grocery list. A primary user has additional permissions: finalizing the meal plan, managing the grocery list, inviting or removing members, and adjusting household settings. Primary users are designated by the account holder (the person who created the household) and can assign other members as primary if desired.',
       },
       {
         q: 'Who manages billing?',
@@ -181,7 +181,7 @@ const FAQ_DATA: FaqCategory[] = [
       },
       {
         q: 'Can I delete my account?',
-        a: `Contact us at ${BRAND.supportEmail} to request account deletion. If you're the account holder, this will also remove the household and all associated data.`,
+        a: `You can cancel your subscription at any time. If you wish to delete your account, contact us at ${BRAND.supportEmail} to request account deletion. If you're the account holder, this will also remove the household and all associated data.`,
       },
     ],
   },
