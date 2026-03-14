@@ -1,6 +1,8 @@
 /**
  * POST /v1/households
  * Creates a new household — the user becomes both account holder and primary user.
+ *
+ * Member record now stores firstName and lastName alongside displayName.
  */
 
 import type { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
@@ -37,7 +39,7 @@ export const handler = async (
       createdBy: user.userId,
       createdAt: now,
       updatedAt: now,
-      maxMembers: 50,
+      maxMembers: 8,
     });
 
     // Create the creator's membership — account holder + primary user
@@ -48,6 +50,8 @@ export const handler = async (
       GSI1SK: `HH#${householdId}`,
       userId: user.userId,
       email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
       displayName: user.displayName,
       role: 'primary',
       isAccountHolder: true,

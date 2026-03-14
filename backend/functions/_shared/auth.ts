@@ -1,5 +1,10 @@
 /**
  * Auth utilities — extract user info from API Gateway JWT authorizer context.
+ *
+ * Cognito standard attributes mapped:
+ *   given_name  → firstName
+ *   family_name → lastName
+ *   name        → displayName (preferred name)
  */
 
 import type { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
@@ -8,6 +13,9 @@ import { ForbiddenError, UnauthorizedError } from './errors';
 export interface AuthUser {
   userId: string; // Cognito sub
   email: string;
+  firstName: string;
+  lastName: string;
+  /** Preferred name — used for display throughout the app */
   displayName: string;
   householdId: string | null;
   role: string | null; // 'primary' | 'member'
@@ -21,10 +29,17 @@ export function getAuthUser(event: APIGatewayProxyEventV2WithJWTAuthorizer): Aut
     throw new UnauthorizedError('Missing authentication');
   }
 
+  const firstName = (claims.given_name as string) || '';
+  const lastName = (claims.family_name as string) || '';
+  // Preferred name (Cognito "name") falls back to firstName, then email
+  const displayName = (claims.name as string) || firstName || (claims.email as string) || 'User';
+
   return {
     userId: claims.sub as string,
     email: (claims.email as string) || '',
-    displayName: (claims.name as string) || (claims.email as string) || 'User',
+    firstName,
+    lastName,
+    displayName,
     householdId: (claims['custom:householdId'] as string) || null,
     role: (claims['custom:role'] as string) || null,
   };
@@ -40,14 +55,14 @@ export function requireHouseholdAccess(user: AuthUser, householdId: string): voi
   }
 }
 
-/** Verify the user is an admin of their household */
+/** Verify the user is a primary user of their household */
 export function requirePrimary(user: AuthUser): void {
   if (user.role !== 'primary') {
-    throw new ForbiddenError('Only household admins can perform this action');
+    throw new ForbiddenError('Only primary users can perform this action');
   }
 }
 
-/** Verify admin access for a specific household */
+/** Verify primary access for a specific household */
 export function requireHouseholdPrimary(user: AuthUser, householdId: string): void {
   requireHouseholdAccess(user, householdId);
   requirePrimary(user);

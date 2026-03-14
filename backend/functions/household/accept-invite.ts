@@ -23,13 +23,17 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer): P
     const householdId = invite.householdId as string;
     const now = new Date().toISOString();
 
-    // Add member to household
+    // Add member to household — store first/last/preferred names
     await putItem({
       PK: `HH#${householdId}`, SK: `MEMBER#${user.userId}`,
       GSI1PK: `USER#${user.userId}`, GSI1SK: `HH#${householdId}`,
       userId: user.userId, email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
       displayName: (invite.displayName as string) || user.displayName,
-      role: invite.role || 'member', joinedAt: now,
+      role: invite.role || 'member',
+      isAccountHolder: false,
+      joinedAt: now,
     });
 
     // Update Cognito

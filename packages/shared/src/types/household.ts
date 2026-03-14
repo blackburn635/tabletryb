@@ -9,6 +9,11 @@
  *   - Always a primary user
  *   - Only they can manage the Chargebee subscription / billing
  *   - Stored as `isAccountHolder: true` on their membership record
+ *
+ * Name fields:
+ *   - firstName  → Cognito given_name (legal/formal first name)
+ *   - lastName   → Cognito family_name (legal/formal last name)
+ *   - displayName → Cognito name (preferred name — what the app shows)
  */
 
 export type MemberRole = 'primary' | 'member';
@@ -16,6 +21,9 @@ export type MemberRole = 'primary' | 'member';
 export interface HouseholdMember {
   userId: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  /** Preferred name — how this person appears in the app */
   displayName: string;
   role: MemberRole;
   /** True only for the original subscriber who created the household */
@@ -30,7 +38,7 @@ export interface Household {
   createdAt: string;
   updatedAt: string;
   members: HouseholdMember[];
-  maxMembers: number; // Default 50
+  maxMembers: number; // Default 8
 }
 
 export interface HouseholdSettings {

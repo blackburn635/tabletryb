@@ -1,10 +1,7 @@
 /**
  * POST /v1/subscription/checkout — Generate Chargebee checkout URL.
  *
- * UPDATED for Chargebee Product Catalog 2.0:
- *   - Endpoint: checkout_new_for_items (was checkout_new)
- *   - Parameter: subscription_items[item_price_id][0] (was subscription[plan_id])
- *   - Custom field passed via subscription[cf_household_id]
+ * Chargebee PC 2.0 + proper first/last name fields.
  */
 import type { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { getAuthUser } from '../_shared/auth';
@@ -19,6 +16,25 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer): P
     const user = getAuthUser(event);
     const body = parseBody<CreateCheckoutRequest>(event.body);
 
+    // Build checkout params
+    const params: Record<string, string> = {
+      // PC 2.0: item price ID instead of plan_id
+      'subscription_items[item_price_id][0]': body.planId,
+      'subscription_items[quantity][0]': '1',
+      // Customer details — proper first/last name for invoices
+      'customer[email]': user.email,
+      'customer[first_name]': user.firstName || user.displayName,
+      // Custom field to link subscription to household
+      'subscription[cf_household_id]': body.householdId,
+      // Redirect back to app after checkout
+      'redirect_url': body.redirectUrl,
+    };
+
+    // Only include last_name if we have it
+    if (user.lastName) {
+      params['customer[last_name]'] = user.lastName;
+    }
+
     // Create Chargebee hosted checkout page (PC 2.0 item-based API)
     const cbResponse = await fetch(
       `https://${CHARGEBEE_SITE}.chargebee.com/api/v2/hosted_pages/checkout_new_for_items`,
@@ -28,18 +44,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer): P
           Authorization: `Basic ${Buffer.from(CHARGEBEE_API_KEY + ':').toString('base64')}`,
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams({
-          // PC 2.0: item price ID instead of plan_id
-          'subscription_items[item_price_id][0]': body.planId,
-          'subscription_items[quantity][0]': '1',
-          // Customer details pre-filled
-          'customer[email]': user.email,
-          'customer[first_name]': user.displayName,
-          // Custom field to link subscription to household
-          'subscription[cf_household_id]': body.householdId,
-          // Redirect back to app after checkout
-          'redirect_url': body.redirectUrl,
-        }),
+        body: new URLSearchParams(params),
       }
     );
 

@@ -1,5 +1,13 @@
 /**
- * ProfilePage — User profile: name, email, and billing link for account holder.
+ * ProfilePage — User profile: names, email, role, and billing link for account holder.
+ *
+ * Displays:
+ *   - First Name (given_name)
+ *   - Last Name (family_name)
+ *   - Preferred Name (name / displayName)
+ *   - Email
+ *   - Role badge
+ *   - Manage Billing button (account holder only)
  */
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
@@ -28,7 +36,23 @@ const ProfilePage: React.FC = () => {
           <div className="profile-field">
             <User size={16} />
             <div>
-              <label>Name</label>
+              <label>First Name</label>
+              <p>{user?.firstName || 'Not set'}</p>
+            </div>
+          </div>
+
+          <div className="profile-field">
+            <User size={16} />
+            <div>
+              <label>Last Name</label>
+              <p>{user?.lastName || 'Not set'}</p>
+            </div>
+          </div>
+
+          <div className="profile-field">
+            <User size={16} />
+            <div>
+              <label>Preferred Name</label>
               <p>{user?.displayName || 'Not set'}</p>
             </div>
           </div>
