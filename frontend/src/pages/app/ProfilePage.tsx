@@ -1,26 +1,56 @@
 /**
- * ProfilePage — User profile: names, email, role, and billing link for account holder.
+ * ProfilePage — User profile with working Manage Billing button.
  *
- * Displays:
- *   - First Name (given_name)
- *   - Last Name (family_name)
- *   - Preferred Name (name / displayName)
- *   - Email
- *   - Role badge
- *   - Manage Billing button (account holder only)
+ * Manage Billing calls POST /v1/subscription/portal to get a Chargebee
+ * portal session URL, then opens it in a new tab.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, Mail, CreditCard, ExternalLink } from 'lucide-react';
+import { User, Mail, CreditCard, ExternalLink, Loader2 } from 'lucide-react';
+
+const API_URL = process.env.REACT_APP_API_URL || '';
 
 const ProfilePage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, getToken } = useAuth();
+  const [billingLoading, setBillingLoading] = useState(false);
+  const [billingError, setBillingError] = useState('');
+
   // TODO: Fetch isAccountHolder from household membership record
   const isAccountHolder = user?.role === 'primary'; // Simplified for now
 
   const openBillingPortal = async () => {
-    // TODO: Call POST /v1/subscription/portal → redirect to Chargebee
-    alert('Chargebee billing portal integration — coming soon');
+    setBillingLoading(true);
+    setBillingError('');
+
+    try {
+      const token = await getToken();
+
+      const response = await fetch(`${API_URL}/v1/subscription/portal`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || `Failed to open billing portal (${response.status})`);
+      }
+
+      const data = await response.json();
+
+      if (data.portalUrl) {
+        window.open(data.portalUrl, '_blank');
+      } else {
+        throw new Error('No portal URL returned');
+      }
+    } catch (err: any) {
+      console.error('Billing portal error:', err);
+      setBillingError(err.message || 'Failed to open billing portal.');
+    } finally {
+      setBillingLoading(false);
+    }
   };
 
   return (
@@ -78,9 +108,38 @@ const ProfilePage: React.FC = () => {
             <div className="profile-billing">
               <h3><CreditCard size={18} /> Billing & Subscription</h3>
               <p>Manage your payment method, view invoices, or update your plan.</p>
-              <button className="btn btn-secondary" onClick={openBillingPortal}>
-                Manage Billing
-                <ExternalLink size={14} />
+
+              {billingError && (
+                <div style={{
+                  padding: '0.5rem 0.75rem',
+                  marginBottom: '0.75rem',
+                  backgroundColor: '#FEF2F2',
+                  border: '1px solid #FECACA',
+                  borderRadius: '6px',
+                  color: '#DC2626',
+                  fontSize: '0.8rem',
+                }}>
+                  {billingError}
+                </div>
+              )}
+
+              <button
+                className="btn btn-secondary"
+                onClick={openBillingPortal}
+                disabled={billingLoading}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+              >
+                {billingLoading ? (
+                  <>
+                    <Loader2 size={14} className="spin" />
+                    Opening...
+                  </>
+                ) : (
+                  <>
+                    Manage Billing
+                    <ExternalLink size={14} />
+                  </>
+                )}
               </button>
             </div>
           </>

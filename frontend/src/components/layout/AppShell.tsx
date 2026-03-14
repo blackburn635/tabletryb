@@ -22,6 +22,8 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { BRAND } from '../../config/branding';
 import Logo from '../common/Logo';
+import TrialBanner from '../common/TrialBanner';
+
 import {
   Home, ChevronDown, User, Users, BookOpen, Settings,
   HelpCircle, LogOut,
@@ -141,6 +143,9 @@ const AppShell: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* Subscription status banner — trial countdown, expired notice, etc. */}
+      <TrialBanner />
 
       {/* ================================================================
          Main Content Area (renders DashboardPage or dropdown pages)

@@ -54,7 +54,7 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer): P
       return error(new Error(`Chargebee API error: ${cbResponse.status}`));
     }
 
-    const cbData = await cbResponse.json();
+    const cbData = await cbResponse.json() as { hosted_page?: { url?: string } };
     return success({ checkoutUrl: cbData.hosted_page?.url });
   } catch (err) { return error(err); }
 };

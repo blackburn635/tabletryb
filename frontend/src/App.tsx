@@ -29,6 +29,7 @@ import RecipesPage from './pages/app/RecipesPage';
 import SettingsPage from './pages/app/SettingsPage';
 import SupportPage from './pages/app/SupportPage';
 import AccountPage from './pages/app/AccountPage';
+import SubscribePage from './pages/app/SubscribePage';
 
 // Accept invite
 import AcceptInvitePage from './pages/accept-invite/AcceptInvitePage';
@@ -89,6 +90,7 @@ const App: React.FC = () => {
           <Route path="/app/settings" element={<SettingsPage />} />
           <Route path="/app/support" element={<SupportPage />} />
           <Route path="/app/account" element={<AccountPage />} />
+          <Route path="/app/subscribe" element={<SubscribePage />} />
         </Route>
       </Route>
 

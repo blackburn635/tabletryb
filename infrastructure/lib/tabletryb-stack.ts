@@ -330,6 +330,17 @@ export class TableTrybStack extends cdk.Stack {
       policies: [dynamoCrudPolicy],
     });
 
+    const subscriptionPortal = new TrybFunction(this, 'SubscriptionPortal', {
+      stage, sharedEnv,
+      entry: 'subscription/create-portal.ts',
+      description: 'Generate Chargebee customer portal session URL',
+      environment: {
+        CHARGEBEE_SITE: process.env.CHARGEBEE_SITE || '',
+        CHARGEBEE_API_KEY: process.env.CHARGEBEE_API_KEY || '',
+      },
+      policies: [dynamoReadPolicy],
+    });
+
     // --- Image Upload ---
     const imageUpload = new TrybFunction(this, 'ImageUpload', {
       stage, sharedEnv,
@@ -428,6 +439,7 @@ export class TableTrybStack extends cdk.Stack {
     // --- Subscription ---
     addRoute(apigatewayv2.HttpMethod.POST,   '/v1/subscription/checkout', subscriptionCheckout);
     addRoute(apigatewayv2.HttpMethod.GET,    '/v1/subscription/status', subscriptionStatus);
+    addRoute(apigatewayv2.HttpMethod.POST,   '/v1/subscription/portal', subscriptionPortal);
 
     // --- Image Upload ---
     addRoute(apigatewayv2.HttpMethod.POST,   '/v1/households/{householdId}/images/presigned-url', imageUpload);
