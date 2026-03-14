@@ -1,13 +1,15 @@
 /**
  * POST /v1/webhooks/chargebee
  * Processes Chargebee webhook events to keep subscription state in DynamoDB.
- * No JWT auth — verified by Chargebee webhook signature.
+ * No JWT auth — verified by Chargebee webhook Basic Auth.
+ *
+ * UPDATED for Chargebee Product Catalog 2.0:
+ *   - planId read from subscription_items[0].item_price_id (fallback to plan_id for compat)
  */
 
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { putItem, getItem, TABLE_NAME } from '../_shared/dynamo';
 import type { SubscriptionStatus, ChargebeeEventType } from '@tabletryb/shared';
-import * as crypto from 'crypto';
 
 const WEBHOOK_SECRET = process.env.CHARGEBEE_WEBHOOK_SECRET!;
 
@@ -30,12 +32,16 @@ export const handler = async (
       return { statusCode: 200, body: 'OK' };
     }
 
-    // Extract household ID from Chargebee subscription metadata
+    // Extract household ID from Chargebee subscription custom field
     const householdId = subscription.cf_household_id || subscription.meta_data?.householdId;
     if (!householdId) {
       console.error('No householdId in subscription metadata:', subscription.id);
       return { statusCode: 200, body: 'OK — no householdId' };
     }
+
+    // PC 2.0: Extract plan ID from subscription_items array
+    // The first item with item_type "plan" is the subscription's plan
+    const planId = extractPlanId(subscription);
 
     const now = new Date().toISOString();
 
@@ -66,7 +72,7 @@ export const handler = async (
       chargebeeSubscriptionId: subscription.id,
       chargebeeCustomerId: subscription.customer_id,
       status: finalStatus,
-      planId: subscription.plan_id,
+      planId,
       trialStartedAt: subscription.trial_start
         ? new Date(subscription.trial_start * 1000).toISOString()
         : undefined,
@@ -89,7 +95,7 @@ export const handler = async (
       }),
     });
 
-    console.log(`Subscription updated: household=${householdId}, status=${finalStatus}, event=${eventType}`);
+    console.log(`Subscription updated: household=${householdId}, status=${finalStatus}, planId=${planId}, event=${eventType}`);
 
     return { statusCode: 200, body: 'OK' };
   } catch (err) {
@@ -99,16 +105,43 @@ export const handler = async (
   }
 };
 
-/** Verify Chargebee webhook signature */
+/**
+ * Extract the plan item price ID from a PC 2.0 subscription object.
+ *
+ * PC 2.0 subscriptions have a `subscription_items` array where each item
+ * has `item_price_id` and `item_type`. The plan item has item_type = "plan".
+ *
+ * Falls back to `plan_id` for compatibility with sites that still have
+ * PC 1.0 fields present.
+ */
+function extractPlanId(subscription: Record<string, any>): string {
+  // PC 2.0: look in subscription_items array
+  if (Array.isArray(subscription.subscription_items)) {
+    const planItem = subscription.subscription_items.find(
+      (item: any) => item.item_type === 'plan'
+    );
+    if (planItem?.item_price_id) {
+      return planItem.item_price_id;
+    }
+  }
+
+  // Fallback: PC 1.0 compatibility field
+  if (subscription.plan_id) {
+    return subscription.plan_id;
+  }
+
+  console.warn('Could not extract planId from subscription:', subscription.id);
+  return 'unknown';
+}
+
+/** Verify Chargebee webhook signature via Basic Auth */
 function verifyWebhookSignature(event: APIGatewayProxyEventV2): boolean {
-  // Chargebee sends the webhook password in Basic Auth
-  // or you can verify using their webhook signature mechanism
   const authHeader = event.headers?.authorization;
 
   if (!authHeader) return false;
 
   // Basic auth: "Basic base64(username:password)"
-  // Chargebee uses the webhook password as the username with empty password
+  // Chargebee sends the webhook secret as the username with dummy password
   try {
     const encoded = authHeader.replace('Basic ', '');
     const decoded = Buffer.from(encoded, 'base64').toString('utf-8');

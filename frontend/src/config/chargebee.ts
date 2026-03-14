@@ -1,16 +1,22 @@
 /**
  * Chargebee frontend configuration.
  * Used for opening hosted checkout pages and the customer billing portal.
+ *
+ * UPDATED for Chargebee Product Catalog 2.0:
+ *   - Plan IDs are now item price IDs matching Chargebee dashboard
  */
 
 export const chargebeeConfig = {
   /** Chargebee site name — set via environment variable */
   site: process.env.REACT_APP_CHARGEBEE_SITE || 'tabletryb-test',
 
-  /** Plan IDs must match what's configured in Chargebee dashboard */
+  /**
+   * Item price IDs must match what's configured in Chargebee dashboard.
+   * PC 2.0 uses item_price_id format: {Plan}-{Currency}-{Frequency}
+   */
   plans: {
-    monthly: 'tabletryb-monthly',
-    annual: 'tabletryb-annual',
+    monthly: 'TableTryb-USD-Monthly',
+    annual: 'TableTryb-USD-Yearly',
   },
 
   /** Trial duration in days */

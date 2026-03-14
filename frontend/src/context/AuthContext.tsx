@@ -1,6 +1,11 @@
 /**
  * AuthContext — Cognito authentication state management.
  * Handles sign-in, sign-up, sign-out, and token refresh.
+ *
+ * FIX: refreshUser() now uses refreshSession() with the refresh token
+ * instead of getSession() which returns the cached JWT.
+ * This is needed after server-side Cognito attribute updates (e.g. after
+ * household creation sets custom:householdId and custom:role).
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
@@ -137,17 +142,39 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   }, []);
 
+  /**
+   * Refresh user session to pick up server-side Cognito attribute changes.
+   *
+   * IMPORTANT: This uses refreshSession() with the refresh token, NOT getSession().
+   * getSession() returns the cached JWT which won't have updated custom attributes.
+   * refreshSession() exchanges the refresh token for a new ID token that includes
+   * any attributes set server-side (e.g. custom:householdId after household creation).
+   */
   const refreshUser = useCallback(async (): Promise<void> => {
-    const token = await getToken();
-    const cognitoUser = userPool.getCurrentUser();
-    if (cognitoUser) {
+    return new Promise((resolve, reject) => {
+      const cognitoUser = userPool.getCurrentUser();
+      if (!cognitoUser) return reject(new Error('Not authenticated'));
+
+      // First get the current session to extract the refresh token
       cognitoUser.getSession((err: Error | null, session: CognitoUserSession | null) => {
-        if (!err && session?.isValid()) {
-          setUser(extractUser(session));
-        }
+        if (err || !session) return reject(err || new Error('No session'));
+
+        const refreshToken = session.getRefreshToken();
+
+        // Use refreshSession to get a fresh ID token from Cognito
+        cognitoUser.refreshSession(refreshToken, (refreshErr: Error | null, newSession: CognitoUserSession) => {
+          if (refreshErr) {
+            console.error('Failed to refresh session:', refreshErr);
+            return reject(refreshErr);
+          }
+
+          // Update user state with fresh token claims
+          setUser(extractUser(newSession));
+          resolve();
+        });
       });
-    }
-  }, [getToken]);
+    });
+  }, []);
 
   return (
     <AuthContext.Provider value={{
