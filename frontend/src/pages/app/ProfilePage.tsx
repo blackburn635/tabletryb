@@ -1,12 +1,12 @@
 /**
- * ProfilePage — User profile with working Manage Billing button.
+ * ProfilePage — User profile with working Subscription & Billing button.
  *
- * Manage Billing calls POST /v1/subscription/portal to get a Chargebee
- * portal session URL, then opens it in a new tab.
+ * Manage Subscription / Billing calls POST /v1/subscription/portal to get
+ * a Chargebee portal session URL, then navigates to it.
  */
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, Mail, CreditCard, ExternalLink, Loader2 } from 'lucide-react';
+import { User, Mail, CreditCard, Loader2 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_API_URL || '';
 
@@ -35,19 +35,19 @@ const ProfilePage: React.FC = () => {
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || `Failed to open billing portal (${response.status})`);
+        throw new Error(errData.message || `Failed to open Subscription & Billing portal (${response.status})`);
       }
 
       const data = await response.json();
 
       if (data.portalUrl) {
-        window.open(data.portalUrl, '_blank');
+        window.location.href = data.portalUrl;
       } else {
         throw new Error('No portal URL returned');
       }
     } catch (err: any) {
-      console.error('Billing portal error:', err);
-      setBillingError(err.message || 'Failed to open billing portal.');
+      console.error('Subscription & Billing portal error:', err);
+      setBillingError(err.message || 'Failed to open Subscription & Billing portal.');
     } finally {
       setBillingLoading(false);
     }
@@ -106,8 +106,8 @@ const ProfilePage: React.FC = () => {
           <>
             <div className="profile-divider" />
             <div className="profile-billing">
-              <h3><CreditCard size={18} /> Billing & Subscription</h3>
-              <p>Manage your payment method, view invoices, or update your plan.</p>
+              <h3><CreditCard size={18} /> Subscription & Billing</h3>
+              <p>Manage your subscription, payment method, view invoices, or cancel your plan.</p>
 
               {billingError && (
                 <div style={{
@@ -135,10 +135,7 @@ const ProfilePage: React.FC = () => {
                     Opening...
                   </>
                 ) : (
-                  <>
-                    Manage Billing
-                    <ExternalLink size={14} />
-                  </>
+                  'Manage Subscription / Billing'
                 )}
               </button>
             </div>
