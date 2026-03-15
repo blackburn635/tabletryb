@@ -1,7 +1,11 @@
 /**
  * POST /v1/subscription/checkout — Generate Chargebee checkout URL.
  *
- * Chargebee PC 2.0 + proper first/last name fields.
+ * Key design: customer[id] = householdId.
+ * This means every Chargebee webhook carries customer_id = householdId.
+ * No custom fields, no meta_data, no mapping table needed.
+ *
+ * Chargebee PC 2.0 item-based checkout.
  */
 import type { APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { getAuthUser } from '../_shared/auth';
@@ -18,14 +22,14 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer): P
 
     // Build checkout params
     const params: Record<string, string> = {
-      // PC 2.0: item price ID instead of plan_id
+      // PC 2.0: item price ID
       'subscription_items[item_price_id][0]': body.planId,
       'subscription_items[quantity][0]': '1',
-      // Customer details — proper first/last name for invoices
+      // Customer ID = householdId — this is the key linking mechanism.
+      // Every webhook Chargebee sends will carry customer_id = householdId.
+      'customer[id]': body.householdId,
       'customer[email]': user.email,
       'customer[first_name]': user.firstName || user.displayName,
-      // Custom field to link subscription to household
-      'subscription[cf_household_id]': body.householdId,
       // Redirect back to app after checkout
       'redirect_url': body.redirectUrl,
     };

@@ -3,12 +3,15 @@
  * Processes Chargebee webhook events to keep subscription state in DynamoDB.
  * No JWT auth — verified by Chargebee webhook Basic Auth.
  *
- * UPDATED for Chargebee Product Catalog 2.0:
- *   - planId read from subscription_items[0].item_price_id (fallback to plan_id for compat)
+ * Key design: customer_id = householdId.
+ * We set customer[id] = householdId at checkout time, so every webhook
+ * carries the householdId as customer_id. No custom fields or meta_data needed.
+ *
+ * Chargebee PC 2.0: planId read from subscription_items array.
  */
 
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
-import { putItem, getItem, TABLE_NAME } from '../_shared/dynamo';
+import { putItem } from '../_shared/dynamo';
 import type { SubscriptionStatus, ChargebeeEventType } from '@tabletryb/shared';
 
 const WEBHOOK_SECRET = process.env.CHARGEBEE_WEBHOOK_SECRET!;
@@ -32,15 +35,14 @@ export const handler = async (
       return { statusCode: 200, body: 'OK' };
     }
 
-    // Extract household ID from Chargebee subscription custom field
-    const householdId = subscription.cf_household_id || subscription.meta_data?.householdId;
+    // customer_id IS the householdId — set at checkout time via customer[id]
+    const householdId = subscription.customer_id;
     if (!householdId) {
-      console.error('No householdId in subscription metadata:', subscription.id);
-      return { statusCode: 200, body: 'OK — no householdId' };
+      console.error('No customer_id on subscription:', subscription.id);
+      return { statusCode: 200, body: 'OK — no customer_id' };
     }
 
     // PC 2.0: Extract plan ID from subscription_items array
-    // The first item with item_type "plan" is the subscription's plan
     const planId = extractPlanId(subscription);
 
     const now = new Date().toISOString();
@@ -107,15 +109,9 @@ export const handler = async (
 
 /**
  * Extract the plan item price ID from a PC 2.0 subscription object.
- *
- * PC 2.0 subscriptions have a `subscription_items` array where each item
- * has `item_price_id` and `item_type`. The plan item has item_type = "plan".
- *
- * Falls back to `plan_id` for compatibility with sites that still have
- * PC 1.0 fields present.
+ * Falls back to plan_id for PC 1.0 compatibility.
  */
 function extractPlanId(subscription: Record<string, any>): string {
-  // PC 2.0: look in subscription_items array
   if (Array.isArray(subscription.subscription_items)) {
     const planItem = subscription.subscription_items.find(
       (item: any) => item.item_type === 'plan'
@@ -125,7 +121,6 @@ function extractPlanId(subscription: Record<string, any>): string {
     }
   }
 
-  // Fallback: PC 1.0 compatibility field
   if (subscription.plan_id) {
     return subscription.plan_id;
   }
@@ -140,8 +135,6 @@ function verifyWebhookSignature(event: APIGatewayProxyEventV2): boolean {
 
   if (!authHeader) return false;
 
-  // Basic auth: "Basic base64(username:password)"
-  // Chargebee sends the webhook secret as the username with dummy password
   try {
     const encoded = authHeader.replace('Basic ', '');
     const decoded = Buffer.from(encoded, 'base64').toString('utf-8');
