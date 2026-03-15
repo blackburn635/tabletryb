@@ -40,6 +40,9 @@ export const handler = async (event: APIGatewayProxyEventV2WithJWTAuthorizer): P
         },
         body: new URLSearchParams({
           'customer[id]': user.householdId,
+          'redirect_url': event.headers?.origin
+            ? `${event.headers.origin}/app/profile`
+            : '/app/profile',
         }),
       }
     );

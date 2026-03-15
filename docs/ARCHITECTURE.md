@@ -64,7 +64,7 @@ The Family Meal Planner prototype proved out the core product on a single-family
     ┌──────────▼──────────┐       ┌───────────▼────────────┐
     │   Cognito User Pool │       │   Lambda Functions     │
     │   - Self-signup     │       │   (Node 20, ARM64)     │
-    │   - Email verify    │       │   25 functions         │
+    │   - Email verify    │       │   26 functions         │
     │   - Custom attrs:   │       │   TypeScript + esbuild │
     │     householdId     │       └───────────┬────────────┘
     │     role            │                   │
@@ -117,7 +117,7 @@ tabletryb/
 │       ├── recipes/                # CRUD + Claude AI analyze
 │       ├── meal-plan/              # Generate, vote, finalize
 │       ├── grocery/                # Generate list, cart push
-│       ├── subscription/           # Chargebee checkout, webhook, status
+│       ├── subscription/           # Chargebee checkout, webhook, status, portal
 │       ├── image-upload/           # S3 presigned URLs
 │       └── stores/                 # List supported stores
 │

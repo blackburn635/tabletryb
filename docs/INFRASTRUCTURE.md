@@ -116,6 +116,9 @@ Secrets are passed as environment variables during deployment (not stored in Clo
 | `CHARGEBEE_SITE` | GitHub Secrets / env var | Chargebee site name |
 | `CHARGEBEE_API_KEY` | GitHub Secrets / env var | Chargebee API key |
 | `CHARGEBEE_WEBHOOK_SECRET` | GitHub Secrets / env var | Webhook signature verification |
+
+The `SubscriptionPortal` Lambda also receives `CHARGEBEE_SITE` and `CHARGEBEE_API_KEY`
+as explicit environment variables (same as checkout and webhook).
 | `KROGER_CLIENT_ID` | GitHub Secrets / env var | Kroger API client (optional) |
 | `KROGER_CLIENT_SECRET` | GitHub Secrets / env var | Kroger API secret (optional) |
 

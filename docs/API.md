@@ -89,11 +89,51 @@ Returns extracted recipe data for user review — does NOT auto-save.
 | POST | `/v1/households/{householdId}/grocery-list/{weekId}/cart-push` | `grocery/cart-push` | Member+ | Push items to Kroger cart |
 
 ## Subscription
+## Subscription
 
 | Method | Path | Lambda | Role | Description |
 |--------|------|--------|------|-------------|
 | POST | `/v1/subscription/checkout` | `subscription/create-checkout` | Primary | Generate Chargebee hosted checkout URL |
-| GET | `/v1/subscription/status` | `subscription/get-status` | Primary | Current subscription status + trial days remaining |
+| GET | `/v1/subscription/status` | `subscription/get-status` | Any authenticated | Current subscription status + trial days remaining |
+| POST | `/v1/subscription/portal` | `subscription/create-portal` | Primary | Generate Chargebee customer portal session URL |
+
+### Checkout Request Body
+
+```json
+{
+  "planId": "TableTryb-USD-Monthly",
+  "householdId": "abc123",
+  "redirectUrl": "https://staging.tabletryb.com/app"
+}
+```
+
+Returns `{ "checkoutUrl": "https://tabletryb-test.chargebee.com/..." }` — frontend redirects to this URL.
+
+### Status Response
+
+```json
+{
+  "status": "in_trial",
+  "planId": null,
+  "trialDaysRemaining": 12,
+  "trialEndsAt": "2026-03-29T00:00:00Z",
+  "currentPeriodEnd": null,
+  "cancelAtPeriodEnd": false,
+  "chargebeeCustomerId": null
+}
+```
+
+When no Chargebee subscription exists, trial is calculated from household `createdAt + 14 days`.
+
+### Portal Response
+
+```json
+{
+  "portalUrl": "https://tabletryb-test.chargebeeportal.com/portal/access/..."
+}
+```
+
+Frontend navigates to this URL in the same tab. Chargebee portal redirects back to `/app/profile` when done.
 
 ## Image Upload
 

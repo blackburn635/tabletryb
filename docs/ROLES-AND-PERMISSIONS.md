@@ -48,7 +48,7 @@ TableTryb has two user roles and an account holder flag:
 | Remove members | ✅ | ✅ | ❌ |
 | Designate primary users | ✅ | ✅ | ❌ |
 | Change settings | ✅ | ✅ | ❌ |
-| Manage billing (Chargebee) | ✅ | ❌ | ❌ |
+| Manage Subscription / Billing (Chargebee portal) | ✅ | ❌ | ❌ |
 
 ---
 

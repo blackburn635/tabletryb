@@ -49,7 +49,7 @@
 | createdBy | String (userId) | `cognito-sub-uuid` |
 | createdAt | ISO 8601 | `2026-03-10T12:00:00Z` |
 | updatedAt | ISO 8601 | |
-| maxMembers | Number | `8` |
+| maxMembers | Number | `50` |
 
 ### Household Member
 | Attribute | Value |
@@ -60,7 +60,9 @@
 | GSI1SK | `HH#<householdId>` |
 | userId | String |
 | email | String |
-| displayName | String |
+| firstName | String |
+| lastName | String |
+| displayName | String (preferred name) |
 | role | `"primary"` or `"member"` |
 | isAccountHolder | Boolean (true only for the subscriber who created the household) |
 | joinedAt | ISO 8601 |
@@ -131,7 +133,9 @@
 | PK | `HH#<householdId>` |
 | SK | `WEEK#<isoWeek>#VOTE#<userId>` |
 | userId | String |
-| displayName | String |
+| firstName | String |
+| lastName | String |
+| displayName | String (preferred name) |
 | votes | Map: `{ mealId: "up" | "down" | null }` |
 | updatedAt | ISO 8601 |
 
@@ -158,7 +162,9 @@
 | PK | `HH#<householdId>` |
 | SK | `STORE#<storeId>` |
 | storeId | String |
-| displayName | String |
+| firstName | String |
+| lastName | String |
+| displayName | String (preferred name) |
 | tier | `"cart-push"` / `"search-link"` / `"export-only"` |
 | searchUrlTemplate | String (optional) |
 | oauthConnected | Boolean |
@@ -192,7 +198,7 @@
 | GSI2SK | `<status>#<householdId>` |
 | householdId | String |
 | chargebeeSubscriptionId | String |
-| chargebeeCustomerId | String |
+| chargebeeCustomerId | String (= householdId) |
 | status | `"in_trial"` / `"active"` / `"past_due"` / `"cancelled"` / `"expired"` |
 | planId | String |
 | trialStartedAt / trialEndsAt | ISO 8601 |

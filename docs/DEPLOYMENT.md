@@ -47,6 +47,15 @@ cp .env.example .env.staging
 
 cp .env.example .env.prod
 # Edit with production values
+
+**Important:** All variables in `.env.staging` and `.env.prod` must have the `export` prefix
+so they are available to CDK via `process.env`. Example:
+
+```bash
+export CHARGEBEE_API_KEY=test_DMk...
+```
+
+If you forget `export`, the deploy will succeed but Lambda environment variables will be empty.
 ```
 
 ### 3. Deploy Staging Backend
