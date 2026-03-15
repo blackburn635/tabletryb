@@ -1,34 +1,38 @@
 /**
  * RecipesPage — Recipe library (the "Favorites" from the personal app).
- * Three methods to add recipes:
- *   1. Photo scan (Claude AI vision)
- *   2. URL import (Claude AI text extraction)
- *   3. Manual entry
- *
- * Follows the prototype's two-step flow:
- *   Step 1: Input (paste URL / select photo / manual fields)
- *   Step 2: Review extracted data in RecipeEditForm → Save
+ * Matches the prototype's FavoritesPage layout:
+ *   - Meal-card tile grid with prominent photos
+ *   - Click card to view full recipe in modal
+ *   - Edit / delete buttons on each card
+ *   - Three methods to add: Photo scan, URL import, Manual entry
+ *   - Two-step AI flow: extract → review in RecipeEditForm → save
  */
-import React, { useState, useCallback } from 'react';
-import {
-  Camera, Globe, PenLine, Search, ChefHat, X, Loader,
-} from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useApi } from '../../hooks/useApi';
 import { useAuth } from '../../context/AuthContext';
 import RecipeEditForm from '../../components/recipe/RecipeEditForm';
-import type { AnalyzeRecipeResponse } from '@tabletryb/shared';
+import RecipeModal from '../../components/recipe/RecipeModal';
+import type { Recipe, AnalyzeRecipeResponse } from '@tabletryb/shared';
 
-type AddMode = null | 'photo' | 'url' | 'manual';
+type AddMode = null | 'photo' | 'url' | 'manual' | 'edit';
 
 const RecipesPage: React.FC = () => {
   const api = useApi();
   const { user } = useAuth();
 
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [loading, setLoading] = useState(true);
   const [addMode, setAddMode] = useState<AddMode>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // AI extraction state — shared across photo and URL modes
+  // AI extraction state
   const [aiExtractedData, setAiExtractedData] = useState<AnalyzeRecipeResponse | null>(null);
+
+  // Edit state
+  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
+
+  // Modal state
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
   // Toast
   const [toast, setToast] = useState<string | null>(null);
@@ -37,74 +41,136 @@ const RecipesPage: React.FC = () => {
     setTimeout(() => setToast(null), 3500);
   }, []);
 
-  // Close the add-recipe panel and reset all state
+  // Load recipes from API
+  const loadRecipes = useCallback(async () => {
+    if (!user?.householdId) return;
+    setLoading(true);
+    try {
+      const data = await api.get<Recipe[]>(
+        `/v1/households/${user.householdId}/recipes`
+      );
+      setRecipes(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Failed to load recipes:', err);
+      setRecipes([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [api, user?.householdId]);
+
+  useEffect(() => {
+    loadRecipes();
+  }, [loadRecipes]);
+
+  // Close panel and reset all state
   const closePanel = () => {
     setAddMode(null);
+    setEditingRecipe(null);
     setAiExtractedData(null);
   };
 
-  // After a recipe is saved, close panel and refresh
+  // After save, close panel and refresh list
   const handleFormSaved = () => {
     closePanel();
-    // TODO: Refresh recipe list from API
+    loadRecipes();
   };
 
-  // TODO: Fetch recipes from GET /v1/households/{hhId}/recipes
-  const mockRecipes = [
-    { id: '1', title: 'Chicken Parmesan', source: 'claude-url', readyInMinutes: 45, servings: 4 },
-    { id: '2', title: 'Beef Tacos', source: 'claude-photo', readyInMinutes: 30, servings: 6 },
-    { id: '3', title: 'Pasta Primavera', source: 'manual', readyInMinutes: 25, servings: 4 },
-    { id: '4', title: 'Thai Green Curry', source: 'claude-url', readyInMinutes: 35, servings: 4 },
-    { id: '5', title: 'Salmon Bowl', source: 'manual', readyInMinutes: 20, servings: 2 },
-  ];
+  // Toggle add mode (click again to close)
+  const toggleAddMode = (mode: AddMode) => {
+    if (addMode === mode) {
+      closePanel();
+    } else {
+      setAddMode(mode);
+      setEditingRecipe(null);
+      setAiExtractedData(null);
+    }
+  };
+
+  // Open edit mode
+  const openEdit = (recipe: Recipe) => {
+    setEditingRecipe(recipe);
+    setAiExtractedData(null);
+    setAddMode('edit');
+    setSelectedRecipe(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Delete recipe
+  const handleDelete = async (recipeId: string) => {
+    if (!user?.householdId) return;
+    if (!window.confirm('Remove this recipe from your list?')) return;
+    try {
+      await api.del(`/v1/households/${user.householdId}/recipes/${recipeId}`);
+      showToast('Recipe removed');
+      setRecipes((prev) => prev.filter((r) => r.recipeId !== recipeId));
+      setSelectedRecipe(null);
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to remove recipe.');
+    }
+  };
+
+  // Filter by search
+  const filteredRecipes = recipes.filter((r) =>
+    r.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const panelOpen = addMode !== null;
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner" />
+        <p>Loading recipes...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="page-container">
-      <div className="recipes-header">
-        <h1 className="page-title">Recipe List</h1>
+    <div>
+      <div className="page-header">
+        <h1>Recipes</h1>
+        <p>
+          {recipes.length} saved recipe{recipes.length !== 1 ? 's' : ''}
+        </p>
+      </div>
 
-        {/* Add recipe buttons */}
-        <div className="recipes-add-group">
+      {/* ---- Add Recipe Buttons ---- */}
+      <div className="add-recipe-bar">
+        <span className="add-recipe-label">Add a recipe:</span>
+        <div className="add-recipe-buttons">
           <button
             className={`btn ${addMode === 'photo' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => { setAiExtractedData(null); setAddMode(addMode === 'photo' ? null : 'photo'); }}
+            onClick={() => toggleAddMode('photo')}
+            style={{ fontSize: '0.85rem' }}
           >
-            <Camera size={16} /> Photo
+            📷 Scan Photo
           </button>
           <button
             className={`btn ${addMode === 'url' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => { setAiExtractedData(null); setAddMode(addMode === 'url' ? null : 'url'); }}
+            onClick={() => toggleAddMode('url')}
+            style={{ fontSize: '0.85rem' }}
           >
-            <Globe size={16} /> URL
+            🔗 Import URL
           </button>
           <button
             className={`btn ${addMode === 'manual' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => { setAiExtractedData(null); setAddMode(addMode === 'manual' ? null : 'manual'); }}
+            onClick={() => toggleAddMode('manual')}
+            style={{ fontSize: '0.85rem' }}
           >
-            <PenLine size={16} /> Manual
+            ✏️ Manual
           </button>
         </div>
       </div>
 
-      {/* Search */}
-      <div className="recipes-search">
-        <Search size={16} />
-        <input
-          type="text"
-          placeholder="Search recipes..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
-
-      {/* ---- Expandable Add Recipe Panel ---- */}
-      {addMode && (
+      {/* ---- Expandable Panel ---- */}
+      {panelOpen && (
         <div className="add-recipe-panel">
           <button className="add-panel-close" onClick={closePanel}>
             ✕ Close
           </button>
 
-          {/* ======== MANUAL ENTRY ======== */}
+          {/* Manual Entry */}
           {addMode === 'manual' && (
             <RecipeEditForm
               showToast={showToast}
@@ -113,8 +179,18 @@ const RecipesPage: React.FC = () => {
             />
           )}
 
-          {/* ======== PHOTO SCAN ======== */}
-          {/* Step 1: upload photo */}
+          {/* Edit Existing */}
+          {addMode === 'edit' && editingRecipe && (
+            <RecipeEditForm
+              initialData={editingRecipe}
+              isEdit
+              showToast={showToast}
+              onSave={handleFormSaved}
+              onCancel={closePanel}
+            />
+          )}
+
+          {/* Photo Scan — Step 1: upload */}
           {addMode === 'photo' && !aiExtractedData && (
             <PhotoScanStep
               showToast={showToast}
@@ -123,11 +199,12 @@ const RecipesPage: React.FC = () => {
               api={api}
             />
           )}
-          {/* Step 2: review extracted data */}
+          {/* Photo Scan — Step 2: review & edit */}
           {addMode === 'photo' && aiExtractedData && (
             <div>
               <div className="ai-success-banner">
-                ✓ Claude extracted "<strong>{aiExtractedData.title}</strong>" — review and edit below, then save.
+                ✓ Claude extracted "<strong>{aiExtractedData.title}</strong>" — review and
+                edit below, then save.
               </div>
               <RecipeEditForm
                 initialData={aiExtractedData}
@@ -138,8 +215,7 @@ const RecipesPage: React.FC = () => {
             </div>
           )}
 
-          {/* ======== URL IMPORT ======== */}
-          {/* Step 1: paste URL */}
+          {/* URL Import — Step 1: paste URL */}
           {addMode === 'url' && !aiExtractedData && (
             <UrlImportStep
               showToast={showToast}
@@ -148,11 +224,12 @@ const RecipesPage: React.FC = () => {
               api={api}
             />
           )}
-          {/* Step 2: review extracted data */}
+          {/* URL Import — Step 2: review & edit */}
           {addMode === 'url' && aiExtractedData && (
             <div>
               <div className="ai-success-banner">
-                ✓ Claude extracted "<strong>{aiExtractedData.title}</strong>" — review and edit below, then save.
+                ✓ Claude extracted "<strong>{aiExtractedData.title}</strong>" — review and
+                edit below, then save.
               </div>
               <RecipeEditForm
                 initialData={aiExtractedData}
@@ -165,31 +242,113 @@ const RecipesPage: React.FC = () => {
         </div>
       )}
 
-      {/* Recipe list */}
-      <div className="recipes-grid">
-        {mockRecipes
-          .filter((r) => r.title.toLowerCase().includes(searchQuery.toLowerCase()))
-          .map((recipe) => (
-            <div key={recipe.id} className="recipe-list-card">
-              <div className="recipe-list-image">
-                <ChefHat size={24} />
+      {/* ---- Recipe Grid ---- */}
+      {filteredRecipes.length > 0 ? (
+        <div className="meals-grid" style={{ marginTop: panelOpen ? '24px' : '0' }}>
+          {filteredRecipes.map((recipe) => (
+            <div key={recipe.recipeId} className="meal-card">
+              <div
+                className="meal-card-image"
+                onClick={() => setSelectedRecipe(recipe)}
+                style={{ cursor: 'pointer' }}
+              >
+                {recipe.image ? (
+                  <img src={recipe.image} alt={recipe.title} loading="lazy" />
+                ) : (
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      background: 'var(--clr-surface-2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '2.5rem',
+                    }}
+                  >
+                    🍽️
+                  </div>
+                )}
+                {recipe.source && (
+                  <span className="meal-card-source">
+                    {recipe.source === 'claude-photo' && '📷 Photo'}
+                    {recipe.source === 'claude-url' && '🔗 URL'}
+                    {recipe.source === 'manual' && '✏️ Manual'}
+                    {recipe.source === 'import' && '📥 Import'}
+                  </span>
+                )}
               </div>
-              <div className="recipe-list-body">
-                <h4>{recipe.title}</h4>
-                <p>
-                  {recipe.readyInMinutes} min · {recipe.servings} servings
-                </p>
-                <span className="recipe-source-badge">
-                  {recipe.source === 'claude-photo' && '📷 Photo'}
-                  {recipe.source === 'claude-url' && '🔗 URL'}
-                  {recipe.source === 'manual' && '✏️ Manual'}
-                </span>
+              <div className="meal-card-body">
+                <h3
+                  className="meal-card-title"
+                  onClick={() => setSelectedRecipe(recipe)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {recipe.title}
+                </h3>
+                <div className="meal-card-meta">
+                  {recipe.readyInMinutes > 0 && (
+                    <span>⏱ {recipe.readyInMinutes} min</span>
+                  )}
+                  {recipe.servings > 0 && (
+                    <span>👥 {recipe.servings} servings</span>
+                  )}
+                </div>
+                {recipe.cuisines && recipe.cuisines.length > 0 && (
+                  <div className="meal-card-meta">
+                    <span>🌍 {recipe.cuisines.join(', ')}</span>
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+                  <button
+                    className="btn btn-secondary"
+                    style={{
+                      flex: 1,
+                      padding: '6px',
+                      fontSize: '0.8rem',
+                      justifyContent: 'center',
+                    }}
+                    onClick={() => openEdit(recipe)}
+                  >
+                    ✏️ Edit
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    style={{
+                      padding: '6px 10px',
+                      fontSize: '0.8rem',
+                      color: 'var(--clr-danger)',
+                    }}
+                    onClick={() => handleDelete(recipe.recipeId)}
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
             </div>
           ))}
-      </div>
+        </div>
+      ) : !panelOpen ? (
+        <div className="favorites-empty">
+          <span style={{ fontSize: '3rem' }}>🍽️</span>
+          <h3>No recipes yet</h3>
+          <p style={{ marginTop: '8px' }}>
+            Use the buttons above to start adding recipes.
+          </p>
+        </div>
+      ) : null}
 
-      {/* Toast notification */}
+      {/* ---- Recipe Detail Modal ---- */}
+      {selectedRecipe && (
+        <RecipeModal
+          recipe={selectedRecipe}
+          onClose={() => setSelectedRecipe(null)}
+          onEdit={() => openEdit(selectedRecipe)}
+          onDelete={() => handleDelete(selectedRecipe.recipeId)}
+        />
+      )}
+
+      {/* Toast */}
       {toast && <div className="toast">{toast}</div>}
     </div>
   );
@@ -201,14 +360,14 @@ export default RecipesPage;
 /* ================================================
    URL Import Step — Step 1 of URL import flow
    ================================================ */
-interface UrlImportStepProps {
+interface StepProps {
   showToast: (msg: string) => void;
   onExtracted: (data: AnalyzeRecipeResponse) => void;
   householdId: string;
   api: ReturnType<typeof useApi>;
 }
 
-const UrlImportStep: React.FC<UrlImportStepProps> = ({
+const UrlImportStep: React.FC<StepProps> = ({
   showToast,
   onExtracted,
   householdId,
@@ -233,8 +392,6 @@ const UrlImportStep: React.FC<UrlImportStepProps> = ({
         `/v1/households/${householdId}/recipes/analyze`,
         { type: 'url', url: url.trim() }
       );
-
-      // Attach the source URL to the extracted data
       const recipe = { ...data, sourceUrl: data.sourceUrl || url.trim() };
       showToast(`Extracted "${recipe.title}" — review below`);
       onExtracted(recipe);
@@ -248,7 +405,13 @@ const UrlImportStep: React.FC<UrlImportStepProps> = ({
 
   return (
     <div style={{ maxWidth: '700px' }}>
-      <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '8px' }}>
+      <h3
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontWeight: 700,
+          marginBottom: '8px',
+        }}
+      >
         🔗 Import from URL
       </h3>
       <p
@@ -259,7 +422,8 @@ const UrlImportStep: React.FC<UrlImportStepProps> = ({
           fontFamily: 'var(--font-display)',
         }}
       >
-        Paste a recipe URL. Claude AI visits the page and extracts the recipe — you'll review before saving.
+        Paste a recipe URL. Claude AI visits the page and extracts the recipe —
+        you'll review before saving.
       </p>
       <div className="manual-field">
         <input
@@ -277,13 +441,9 @@ const UrlImportStep: React.FC<UrlImportStepProps> = ({
         disabled={!url.trim() || importing}
         style={{ width: '100%', justifyContent: 'center', padding: '14px' }}
       >
-        {importing ? (
-          <>
-            <Loader size={16} className="spin" /> Claude is extracting...
-          </>
-        ) : (
-          '🤖 Extract Recipe with Claude AI'
-        )}
+        {importing
+          ? '🤖 Claude is extracting...'
+          : '🤖 Extract Recipe with Claude AI'}
       </button>
 
       {importing && (
@@ -309,16 +469,10 @@ const UrlImportStep: React.FC<UrlImportStepProps> = ({
 /* ================================================
    Photo Scan Step — Step 1 of photo scan flow
    ================================================ */
-interface PhotoScanStepProps {
-  showToast: (msg: string) => void;
-  onExtracted: (data: AnalyzeRecipeResponse) => void;
-  householdId: string;
-  api: ReturnType<typeof useApi>;
-}
+const ACCEPTED_IMAGE_TYPES =
+  'image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif';
 
-const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif';
-
-const PhotoScanStep: React.FC<PhotoScanStepProps> = ({
+const PhotoScanStep: React.FC<StepProps> = ({
   showToast,
   onExtracted,
   householdId,
@@ -336,7 +490,6 @@ const PhotoScanStep: React.FC<PhotoScanStepProps> = ({
       return;
     }
     setFile(selected);
-
     const reader = new FileReader();
     reader.onload = (ev) => setPreview(ev.target?.result as string);
     reader.readAsDataURL(selected);
@@ -347,12 +500,10 @@ const PhotoScanStep: React.FC<PhotoScanStepProps> = ({
 
     setAnalyzing(true);
     try {
-      // Convert to base64
       const base64 = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => {
           const result = reader.result as string;
-          // Strip the data URL prefix (e.g., "data:image/jpeg;base64,")
           resolve(result.split(',')[1]);
         };
         reader.onerror = reject;
@@ -378,13 +529,21 @@ const PhotoScanStep: React.FC<PhotoScanStepProps> = ({
     }
   };
 
-  const fileSize = file ? (file.size / 1024 < 1024
-    ? `${(file.size / 1024).toFixed(0)} KB`
-    : `${(file.size / 1024 / 1024).toFixed(1)} MB`) : '';
+  const fileSize = file
+    ? file.size / 1024 < 1024
+      ? `${(file.size / 1024).toFixed(0)} KB`
+      : `${(file.size / 1024 / 1024).toFixed(1)} MB`
+    : '';
 
   return (
     <div style={{ maxWidth: '700px' }}>
-      <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '8px' }}>
+      <h3
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontWeight: 700,
+          marginBottom: '8px',
+        }}
+      >
         📷 Scan a Recipe Photo
       </h3>
       <p
@@ -395,8 +554,8 @@ const PhotoScanStep: React.FC<PhotoScanStepProps> = ({
           fontFamily: 'var(--font-display)',
         }}
       >
-        Take a photo of a recipe card, cookbook page, or screenshot.
-        Claude AI extracts the recipe — you'll review before saving.
+        Take a photo of a recipe card, cookbook page, or screenshot. Claude AI
+        extracts the recipe — you'll review before saving.
       </p>
 
       <div
@@ -444,13 +603,9 @@ const PhotoScanStep: React.FC<PhotoScanStepProps> = ({
         disabled={!file || analyzing}
         style={{ width: '100%', justifyContent: 'center', padding: '14px' }}
       >
-        {analyzing ? (
-          <>
-            <Loader size={16} className="spin" /> Claude is analyzing...
-          </>
-        ) : (
-          '🤖 Extract Recipe with Claude AI'
-        )}
+        {analyzing
+          ? '🤖 Claude is analyzing...'
+          : '🤖 Extract Recipe with Claude AI'}
       </button>
 
       {analyzing && (

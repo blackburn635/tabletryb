@@ -11,10 +11,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApi } from '../../hooks/useApi';
 import { useAuth } from '../../context/AuthContext';
-import type { AnalyzeRecipeResponse, Ingredient } from '@tabletryb/shared';
+import type { AnalyzeRecipeResponse, Ingredient, Recipe } from '@tabletryb/shared';
+
+type InitialData = Partial<AnalyzeRecipeResponse> &
+  Partial<Pick<Recipe, 'recipeId' | 'sourceUrl' | 'source'>>;
 
 interface RecipeEditFormProps {
-  initialData?: Partial<AnalyzeRecipeResponse> & { recipeId?: string; sourceUrl?: string };
+  initialData?: InitialData;
   isEdit?: boolean;
   onSave: () => void;
   onCancel?: () => void;
@@ -157,7 +160,6 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
       let finalImageUrl = existingImageUrl;
       if (imageMode === 'upload' && imageFile) {
         // TODO: Implement S3 presigned upload via image-upload Lambda
-        // For now, skip image upload
         finalImageUrl = '';
       } else if (imageMode === 'url' && imageUrlInput.trim()) {
         finalImageUrl = imageUrlInput.trim();
@@ -180,6 +182,14 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
           step: inst.step.trim(),
         }));
 
+      // Determine source type
+      let source: string = 'manual';
+      if (isEdit && initialData?.source) {
+        source = initialData.source; // preserve original source on edit
+      } else if (initialData?.sourceUrl) {
+        source = 'claude-url';
+      }
+
       const recipe = {
         title: form.title.trim(),
         image: finalImageUrl,
@@ -194,7 +204,7 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
         diets: [],
         ingredients: cleanIngredients,
         instructions: cleanInstructions,
-        source: initialData?.sourceUrl ? 'claude-url' : 'manual',
+        source,
       };
 
       const basePath = `/v1/households/${user.householdId}/recipes`;
@@ -225,7 +235,13 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
   return (
     <div style={{ maxWidth: '700px' }}>
       <div className="settings-group">
-        <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '16px' }}>
+        <h3
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+            marginBottom: '16px',
+          }}
+        >
           {isEdit ? '✏️ Edit Recipe' : '✏️ Review & Save Recipe'}
         </h3>
 
@@ -405,9 +421,7 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
                 <button
                   className="btn btn-secondary"
                   style={{ padding: '4px 10px', fontSize: '0.8rem' }}
-                  onClick={() =>
-                    setIngredients(ingredients.filter((_, j) => j !== i))
-                  }
+                  onClick={() => setIngredients(ingredients.filter((_, j) => j !== i))}
                 >
                   ✕
                 </button>
@@ -476,9 +490,7 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
                 <button
                   className="btn btn-secondary"
                   style={{ padding: '4px 10px', fontSize: '0.8rem' }}
-                  onClick={() =>
-                    setInstructions(instructions.filter((_, j) => j !== i))
-                  }
+                  onClick={() => setInstructions(instructions.filter((_, j) => j !== i))}
                 >
                   ✕
                 </button>
